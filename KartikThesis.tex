@@ -59,15 +59,16 @@ pdfpagelabels% This helps to fix the issue with hyperref with page numbering
 
 \maketitle
 
-\begin{abstract}Every scheduler available in the market comes with plethora of features and 
-options for customizations that fulfills the goals of a custom built 
-clusters and data centers but not all features are sufficient for running the 
-data center at its peak. One such case is when filesystem crashes over large I/O 
-overhead and we see performance of the cluster degrading when there is absence of balance in load
+\begin{abstract}Most schedulers available come with plethora of features and 
+options for customizations that fulfills myriad goals of a custom built 
+clusters and data centers but there are some important functions required to
+run clusters at its peak efficiency. One such case is when filesystem crashes over large I/O 
+workload and we see performance of the cluster degrading when there is absence of balance in load
 pertaining to either I/O, network, CPU or RAM usage.
 These issues that we encounter in real life at Holland Computing Center are the 
-basis for tackling these set of problems. The end result is the development of a Co-Scheduler for the
-cluster that solves the problem of performance degradation that is caused when some of the resource 
+basis and motivation for tackling these set of problems with a goal to run clusters and data centers
+at high efficiency. The end result is the development of a Co-Scheduler for the
+cluster that minimizes if not solves the problem of performance degradation that is caused when some of the resource 
 is throttled to a greater extent for some kind of workloads.\end{abstract}
 \begin{dedication}Dedicated to \end{dedication}
 \begin{acknowledgments}Thanks\end{acknowledgments}
@@ -76,14 +77,14 @@ is throttled to a greater extent for some kind of workloads.\end{abstract}
 
 
 %%   mainmatter is needed after the ToC, (LoF, and LoT) to set the%%   page numbering correctly for the main body\mainmatter\chapter{Introduction}
-Although modern schedulers in clusters provide innumerable features, the basic 
-problem existing with the scheduler hasn't been solved yet. The problem of 
+Although modern schedulers in clusters provide innumerable features, the problem of cluster 
+performance degradation that occurs due to improper load balancing hasn't been addressed yet. The problem of 
 performance degradation when many jobs are scheduled on single system either 
 based on processor equivalence or based on number of processor slots. Some of 
 these schedulers are smart enough to take into account contention of other 
 resources like RAM but ultimately convert the 2D vector values of CPU and RAM 
-into a single scalar value which equals to hardcoding the value or presenting these resources
-in some kind of ratio.
+into a single scalar value which equals to hard-coding the value or presenting these resources
+in some kind of ratio makes us question effectiveness of such scheduling mechanism.
 
 \section{Co-Scheduler}
 
@@ -105,7 +106,7 @@ high throughout computational services. Initially OSG was created to facilitate 
 Large Hadron Collider and about 70\% of the resources are used on analysis of data from particle colliders.
 OSG doesn't own resources but provides software and services to users and enables opportunistic usage and  sharing of resources among
 resource providers.The main goal of OSG is to advance science through open 
-distributed computing. The OSG is multi-disciplinary partnership to federate 
+distributed computing. The OSG provides multi-disciplinary partnership to federate 
 local, regional, community and national cyber-infrastructures to meet the needs 
 of research and academic communities at all scales. 
 
