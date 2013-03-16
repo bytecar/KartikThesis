@@ -1,0 +1,127 @@
+\documentclass[ms,electronic,double]{nuthesis}
+
+%% Needed to typset the math in this sample
+\usepackage{amsmath}
+\usepackage{amsfonts}
+%% Let's use a different font
+\usepackage[sc,osf]{mathpazo}
+
+%% Makes things look better
+\usepackage{microtype}
+
+%% Makes things look better
+\usepackage{booktabs}
+
+%% Gives us extra list environments
+\usepackage{paralist}
+
+%% Be able to include graphicsx
+\usepackage{graphicx}
+
+%% If you use hyperref, you need to load memhfixc *after* it.
+%% See the memoir docs for details.
+\usepackage[%
+pdfauthor={Ned W. Hummel},
+pdftitle={Test Thesis},
+pdfsubject={Thesis},
+pdfkeywords={LaTeX, Thesis, University of Nebrska, Test},
+linkcolor=dark-blue,
+pagecolor=dark-green,
+citecolor=dark-blue,
+urlcolor=dark-red,
+colorlinks=true,
+backref,
+plainpages=false,% This helps to fix the issue with hyperref with page numbering
+pdfpagelabels% This helps to fix the issue with hyperref with page numbering
+]{hyperref}
+
+%% Needed by memoir to fix things with hyperref
+\usepackage{memhfixc}
+
+%% I like darker colors
+\usepackage{color}
+\definecolor{dark-red}{rgb}{0.6,0,0}
+\definecolor{dark-green}{rgb}{0,0.6,0}
+\definecolor{dark-blue}{rgb}{0,0,0.6}
+
+\begin{document}
+  
+\frontmatter
+\title{Intelligent Job Router}
+\author{Kartik Vedalaveni}
+\adviser{Dr. David Swanson}
+\adviserAbstract{Dr. David Swanson}
+\major{Computer Science}
+\degreemonth{May}
+\degreeyear{2013}
+\college{Graduate College}\university{University Of Nebraska}\city{Lincoln}\state{Nebraska}
+\doctype{Thesis}\degree{Master Of Science}\degreeabbreviation{M.S}
+
+\maketitle
+
+\begin{abstract}Every scheduler available in the market comes with plethora of features and 
+options for customizations that fulfills the goals of a custom built 
+clusters and data centers but not all features are sufficient for running the 
+data center at its peak. One such case is when filesystem crashes over large I/O 
+overhead and we see performance of the cluster degrading when there is absence of balance in load
+pertaining to either I/O, network, CPU or RAM usage.
+These issues that we encounter in real life at Holland Computing Center are the 
+basis for tackling these set of problems. The end result is the development of a Co-Scheduler for the
+cluster that solves the problem of performance degradation that is caused when some of the resource 
+is throttled to a greater extent for some kind of workloads.\end{abstract}
+\begin{dedication}Dedicated to \end{dedication}
+\begin{acknowledgments}Thanks\end{acknowledgments}
+
+\tableofcontents%\listoffigures%\listoftables
+
+
+%%   mainmatter is needed after the ToC, (LoF, and LoT) to set the%%   page numbering correctly for the main body\mainmatter\chapter{Introduction}
+Although modern schedulers in clusters provide innumerable features, the basic 
+problem existing with the scheduler hasn't been solved yet. The problem of 
+performance degradation when many jobs are scheduled on single system either 
+based on processor equivalence or based on number of processor slots. Some of 
+these schedulers are smart enough to take into account contention of other 
+resources like RAM but ultimately convert the 2D vector values of CPU and RAM 
+into a single scalar value which equals to hardcoding the value or presenting these resources
+in some kind of ratio.
+
+\section{Co-Scheduler}
+
+%% Thesis goes here\chapter{Background}HTCondor is a distributed system developed by HTCondor team at the University of 
+Wisconsin-Madison.It provides High-Throughput Computing environment to sites 
+that foster research computing and enables sites to share computing resources when 
+workstations are idle at a given site. HTCondor system includes a batch queuing 
+system for a pool of workstations, HTCondor runs on both UNIX and windows based 
+workstations that are all connected by a network. 
+
+\section{High-Throughput Computing} The workloads that run on 
+condor system doesn't have an objective of  how fast the job can be completed but how many 
+times can the job be run in the next few months.To be precise, European Grid 
+Infrastructure defines HTC as a computing paradigm that focuses on the efficient 
+execution of large number of loosely coupled tasks.
+\section{Open Science Grid} Open Science Grid(OSG), provides service and support 
+for resource providers and scientific institutions using a distributed fabric of 
+high throughout computational services. Initially OSG was created to facilitate data analysis from the 
+Large Hadron Collider and about 70\% of the resources are used on analysis of data from particle colliders.
+OSG doesn't own resources but provides software and services to users and enables opportunistic usage and  sharing of resources among
+resource providers.The main goal of OSG is to advance science through open 
+distributed computing. The OSG is multi-disciplinary partnership to federate 
+local, regional, community and national cyber-infrastructures to meet the needs 
+of research and academic communities at all scales. 
+
+%% backmatter is needed at the end of the main body of your thesis to%% set up page numbering correctly for the remainder of the thesis\backmatter%% Start the correct formatting for the appendices\appendix
+%% Appendices go here (if you have them)%% Bibliography goes here (You better have one)%% BibTeX is your friend%% Index go here (if you have one)
+
+%% Bibliography goes here (You better have one)
+%% BibTeX is your friend
+\bibliographystyle{plain}
+\bibliography{nuthesis}
+%% Pull in all the entries in the bibtex file. Is is a useful trick to
+%% check all your references.
+\nocite{*}
+
+%% Index go here (if you have one)
+
+
+
+\end{document}
