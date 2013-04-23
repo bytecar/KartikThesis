@@ -24,7 +24,7 @@
 pdfauthor={Ned W. Hummel},
 pdftitle={Test Thesis},
 pdfsubject={Thesis},
-pdfkeywords={LaTeX, Thesis, University of Nebrska, Test},
+pdfkeywords={LaTeX, Thesis, University of Nebraska, Test},
 linkcolor=dark-blue,
 pagecolor=dark-green,
 citecolor=dark-blue,
@@ -45,7 +45,6 @@ pdfpagelabels% This helps to fix the issue with hyperref with page numbering
 \definecolor{dark-blue}{rgb}{0,0,0.6}
 
 \begin{document}
-  
 \frontmatter
 \title{Intelligent Job Router}
 \author{Kartik Vedalaveni}
@@ -56,20 +55,19 @@ pdfpagelabels% This helps to fix the issue with hyperref with page numbering
 \degreeyear{2013}
 \college{Graduate College}\university{University Of Nebraska}\city{Lincoln}\state{Nebraska}
 \doctype{Thesis}\degree{Master Of Science}\degreeabbreviation{M.S}
-
 \maketitle
 
-\begin{abstract}Most schedulers available come with plethora of features and 
-options for customizations that fulfills myriad goals of a custom built 
-clusters and data centers but there are some important functions required to
-run clusters at its peak efficiency. One such case is when filesystem crashes over large I/O 
-workload and we see performance of the cluster degrading when there is absence of balance in load
-pertaining to either I/O, network, CPU or RAM usage.
-These issues that we encounter in real life at Holland Computing Center are the 
-basis and motivation for tackling these set of problems with a goal to run clusters and data centers
+\begin{abstract}Schedulers come with plethora of features and 
+options for customization that fulfills myriad goals of  
+clusters and data centers . Often there is a need to extend these schedulers to solve 
+situations arising from new use cases. One such case is when any resource like I/O, RAM or network is
+throttled and the degradation occurs as a result of it . With increase in number of entities concurrently 
+using the resource, there is a 
+need to monitor and schedule concurrent and unscrupulous access to any given resource.
+These issues that we encounter in real life at Holland Computing Center (CITE) are the 
+basis and motivation for tackling this problem with a goal to run clusters and data centers
 at high efficiency. The end result is the development of a Co-Scheduler for the
-cluster that minimizes if not solves the problem of performance degradation that is caused when some of the resource 
-is throttled to a greater extent for some kind of workloads.\end{abstract}
+cluster that minimizes if not solves the problem of excessive performance degradation.\end{abstract}
 \begin{dedication}Dedicated to \end{dedication}
 \begin{acknowledgments}Thanks\end{acknowledgments}
 
@@ -77,52 +75,96 @@ is throttled to a greater extent for some kind of workloads.\end{abstract}
 
 
 %%   mainmatter is needed after the ToC, (LoF, and LoT) to set the%%   page numbering correctly for the main body\mainmatter\chapter{Introduction}
-Although modern schedulers in clusters provide innumerable features, the problem of cluster 
-performance degradation that occurs due to improper load balancing hasn't been addressed yet. The problem of 
-performance degradation when many jobs are scheduled on single system either 
+Modern schedulers in clusters provide innumerable features, the problem of cluster 
+performance degradation that occurs due to improper load balancing is a problem  that hasn't been addressed. 
+The problem of performance degradation when many jobs are scheduled on single system either 
 based on processor equivalence or based on number of processor slots. Some of 
-these schedulers are smart enough to take into account contention of other 
+these schedulers like maui (CITE) are smart enough to take into account contention of other 
 resources like RAM but ultimately convert the 2D vector values of CPU and RAM 
 into a single scalar value which equals to hard-coding the value or presenting these resources
-in some kind of ratio makes us question effectiveness of such scheduling mechanism.
+in some kind of ratio which makes us question effectiveness of such scheduling mechanism.
+
 
 \section{Co-Scheduler}
 
-%% Thesis goes here\chapter{Background}HTCondor is a distributed system developed by HTCondor team at the University of 
-Wisconsin-Madison.It provides High-Throughput Computing environment to sites 
-that foster research computing and enables sites to share computing resources when 
-workstations are idle at a given site. HTCondor system includes a batch queuing 
-system for a pool of workstations, HTCondor runs on both UNIX and windows based 
-workstations that are all connected by a network. 
+DHTC environment
 
-\section{High-Throughput Computing} The workloads that run on 
-condor system doesn't have an objective of  how fast the job can be completed but how many 
-times can the job be run in the next few months.To be precise, European Grid 
+%% Thesis goes here\chapter{Background}
+
+\section{HTCondor} HTCondor is a distributed system developed by HTCondor team at the 
+University of Wisconsin-Madison. It provides High-Throughput Computing environment to sites 
+that foster research computing and enables sites to share computing resources when 
+computers are idle at a given site. HTCondor system includes a batch queuing 
+system for a pool of computers mainly used for compute-intensive jobs, HTCondor runs on both
+ UNIX and windows based workstations that are all connected by a network.  
+ HTCondor serves the research community by providing them a queuing mechanism, 
+ scheduling policy, priority scheme and resource classification. Although there are other 
+ batch schedulers out there for dedicated machines. The power of condor comes from 
+ the fact that  the amount of compute power represented by sum total of all the 
+ non-dedicated desktop workstations sitting on people's desks is sometimes far 
+ greater than the compute power of dedicated central resource. There are many 
+ unique tools and capabilities in HTCondor which make utilizing resources from 
+ non-dedicated systems effective. These capabilities include process checkpoint 
+ and migration, remote system calls and ClassAds.
+
+
+\section{High-Throughput Computing} High Throughput Computing, HTC is defined as 
+a computing environment that that delivers large amounts of computational
+power over a long period of time.  The important factor being over a long period of time which 
+differentiates HTC from HPC which focuses on getting large amount of work done in small amount of time.
+The workloads that run on condor system doesn't have an objective of  how fast the job can be completed 
+but how many times can the job be run in the next few months.In another definition of HTC, European Grid  
 Infrastructure defines HTC as a computing paradigm that focuses on the efficient 
 execution of large number of loosely coupled tasks.
 \section{Open Science Grid} Open Science Grid(OSG), provides service and support 
 for resource providers and scientific institutions using a distributed fabric of 
-high throughout computational services. Initially OSG was created to facilitate data analysis from the 
-Large Hadron Collider and about 70\% of the resources are used on analysis of data from particle colliders.
-OSG doesn't own resources but provides software and services to users and enables opportunistic usage and  sharing of resources among
-resource providers.The main goal of OSG is to advance science through open 
-distributed computing. The OSG provides multi-disciplinary partnership to federate 
-local, regional, community and national cyber-infrastructures to meet the needs 
-of research and academic communities at all scales. 
+high throughout computational services. OSG was created to facilitate data analysis from the 
+Large Hadron Collider . OSG doesn't own resources but provides software and services to 
+users and enables opportunistic usage and sharing of resources among resource providers.
+The main goal of OSG is to advance science through open distributed computing. 
+The OSG provides multi-disciplinary partnership to federate local, regional, community and 
+national cyber-infrastructures to meet the needs of research and academic communities at all scales.
 
-%% backmatter is needed at the end of the main body of your thesis to%% set up page numbering correctly for the remainder of the thesis\backmatter%% Start the correct formatting for the appendices\appendix
-%% Appendices go here (if you have them)%% Bibliography goes here (You better have one)%% BibTeX is your friend%% Index go here (if you have one)
+OSG provides resources and directions to Virtual Organizations(VO's) for the purposes of LHC experiments
+and HTC in general. \\
 
+Building a OSG site requires listing background and careful planning. The major 
+components of a OSG site includes a Storage Element and Compute Element. \\
+
+Storage elements (SE) manage physical systems, disk caches and hierarchical mass storage 
+systems, its an interface for grid jobs to underlying storage Storage Resource Management protocol and Globus 
+Grid FTP protocol and others, A storage element requires an underlying storage system like hadoop, xrootd
+and a GridFTP server and an SRM interface.\\
+
+A Compute Element(CE) allows grid users to run jobs on your site. It provides a 
+bunch of services when run on the gatekeeper. The basic components include 
+the GRAM and GridFTP on the same CE host to successfully enable file transfer 
+mechanisms of Condor-G.\\
+
+\section{SPC}
+
+\section{Job Router}Condor Job Router as defined in condor manual\cite{manual56} transforms jobs from vanilla 
+universe to grid universe according to a configurable policy.   Condor Job 
+Router helps to balance jobs across clusters by transferring excess jobs from 
+one cluster to another.  The rate of job submissions equals the rate at which 
+site starts running the job. The other mechanisms including glidein and condor 
+flocking does not provide this kind of balancing mechanism.
+
+High throughput work flows benefits a lot from Job routing as its easy to reach the goal of distributing the 
+workload and keeping as many computers as busy as possible. The Job Router does not know which site
+will run the jobs faster but it can decide whether to send more jobs to a site based on whether the already 
+submitted Jobs are sitting idle or not or whether the site has experienced 
+recent job failures.%% backmatter is needed at the end of the main body of your thesis to%% set up page numbering correctly for the remainder of the thesis\backmatter%% Start the correct formatting for the appendices\appendix
+%% Appendices go here (if you have them)
+%% Bibliography goes here (You better have one)%% BibTeX is your friend%% Index go here (if you have one)
 %% Bibliography goes here (You better have one)
 %% BibTeX is your friend
 \bibliographystyle{plain}
-\bibliography{nuthesis}
+\bibliography{KartikThesis}
 %% Pull in all the entries in the bibtex file. Is is a useful trick to
 %% check all your references.
 \nocite{*}
 
 %% Index go here (if you have one)
-
-
 
 \end{document}
