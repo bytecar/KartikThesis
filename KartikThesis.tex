@@ -580,41 +580,31 @@ ULOG_MISSED_EVENT: Missed event
 ULOG_UNK_ERROR: Unknown Error
 \end{verbatim}
 
-Job Submission Algorithm:
+Job Submission Psuedo-Code:
 
 \begin{lstlisting}
-void wait_calculate(string hostFile, args *data, int nSites)	{		
+void logReader(string hostFile, args *data, int nSites)	{		
 		FILE *fp;
 		ReadUserLog reader(fp,false,false);
 		ULogEvent *event = NULL;		
-		if(reader.isInitialized())	{
-			cout<<"Initialized reading log file\n"<<flush;
-		}
-		else{
-			cout<<"ERROR! reading log file host.log"<<flush;
-		}
-              
-        while(reader.readEvent(event)==ULOG_OK)	{            
-            ostringstream cluster_proc;            
+             while(reader.readEvent(event)==ULOG_OK)	{                    
             if((*event).eventNumber==ULOG_EXECUTE )	{                                
+            //Cast into Execute Event
                 ExecuteEvent *exec 
                 = static_cast<ExecuteEvent*>(event);                                       
-                count++;
                 //condor_wait -num K, where K is the 
                 //amount of jobs completed till the wait.
-                               if(count<=N)	{
                     char tmp[100];
                     sprintf(tmp,"condor_wait -num 
                     \%d \%s",count,hostFile.c_str());
-                    return_value=system(tmp);
-                }                                
-                continue;
             }            
             if((*event).eventNumber==ULOG_JOB_TERMINATED)	{                
+            //Cast into Job Terminated Event
                 JobTerminatedEvent *term 
                 = static_cast<JobTerminatedEvent*>(event);                
                 
                 if(term->normal)	{                    
+                    //on Normal termination
                     //Works only for local jobs, 
                     //find the CPU time of local jobs
                 }               
