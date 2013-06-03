@@ -18,6 +18,21 @@
 
 %% Be able to include graphicsx
 \usepackage{graphicx}
+%% Needed to display code 
+\usepackage{listings}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+\usepackage{subfig}
+\usepackage{url}
+\usepackage{placeins}
+
+%% I like darker colors
+\usepackage{color}
+\definecolor{dark-red}{rgb}{0.6,0,0}
+\definecolor{dark-green}{rgb}{0,0.6,0}
+\definecolor{dark-blue}{rgb}{0,0,0.6}
+\definecolor{dark-purple}{rgb}{0.5,0,0.35} 
+\definecolor{light-grey}{rgb}{0.9,0.9,0.9}
 
 %% If you use hyperref, you need to load memhfixc *after* it.
 %% See the memoir docs for details.
@@ -36,21 +51,28 @@ plainpages=false,% This helps to fix the issue with hyperref with page numbering
 pdfpagelabels% This helps to fix the issue with hyperref with page numbering
 ]{hyperref}
 
+%Listings color code
+\lstset{
+language=c,
+basicstyle=\ttfamily,
+keywordstyle=\color{dark-purple}\bfseries,
+stringstyle=\color{dark-red},
+commentstyle=\color{dark-green},
+morecomment=[s][\color{dark-blue}]{/**}{*/},
+numbers=left,%left, right, none
+numberstyle=\tiny\color{black},
+stepnumber=1,
+numbersep=10pt,
+tabsize=4,
+showspaces=false,
+showstringspaces=false,
+frame=none,
+backgroundcolor=\color{light-grey}
+}
+
 %% Needed by memoir to fix things with hyperref
 \usepackage{memhfixc}
 
-%% Needed to display code 
-\usepackage{listings}
-\usepackage{algorithmic}
-\usepackage{algorithm}
-\usepackage{subfig}
-\usepackage{url}
-
-%% I like darker colors
-\usepackage{color}
-\definecolor{dark-red}{rgb}{0.6,0,0}
-\definecolor{dark-green}{rgb}{0,0.6,0}
-\definecolor{dark-blue}{rgb}{0,0,0.6}
 
 \begin{document}
 \frontmatter
@@ -67,13 +89,13 @@ pdfpagelabels% This helps to fix the issue with hyperref with page numbering
 
 \begin{abstract}Schedulers come with plethora of features and 
 options for customization that fulfills myriad goals of  
-clusters and data centers . Most state of the art schedulers does not take into account load of resources 
+clusters and data centers . Most state of the art schedulers do not take into account load of resources 
 like RAM, I/O or Network for scheduling purpose. Often there is a need to extend these schedulers to solve 
 situations arising from these new use cases either by writing a plugin or by Co-Scheduling.One such 
-case is when any resources like I/O, RAM or Network is
+issue is when any resources like I/O, RAM or Network is
 throttled and the degradation that occurs as a result of it . With increase in number of entities concurrently 
 using the resource, there is a 
-need to monitor and schedule concurrent and unscrupulous access to any given resource to prevent 
+need to monitor and schedule concurrent and unmanaged access to any given resource to prevent 
 degradation.These issues that we encounter in real life at Holland Computing Center (CITE) are the 
 basis and motivation for tackling this problem and develop an adaptive approach for scheduling 
 that is aware of multi-resource throttling, load-balancing across multiple sites and degradation 
@@ -90,8 +112,8 @@ Grid Computing as defined by wikipedia is the federation of computer resources f
 to reach a common goal. The resources come in the form of hardware 
 and software that allows us to submit jobs, run the jobs and monitor the jobs on the grid. 
 Universities usually have multiple clusters across their campus and these are 
-owned by different departments but stand united under the banner of university. 
-.Campus grids can be thought of as mini grids in which jobs are spanned across multiple clusters
+owned by different departments but stand united under the banner of university.
+Campus grids can be thought of as mini grids in which jobs are spanned across multiple clusters
  based on the need of the user and available computing infrastructure 
 across multiple clusters within the computing resources across university.
 
@@ -109,20 +131,25 @@ Here at Holland Computing Center, at University Of Nebraska-Lincoln we're
 tackling this issue of cluster degradation caused by 
 over exploitation of one or more resource and I've come up with a solution by adaptively scheduling 
 such highly dynamic resource on the grid across multiple sites by adaptively scaling with respect to
-degradation that is encountered and degree of turnaround time of the sites which would help increase 
-the throughput of the overall Co-Scheduler that also ensures proper loadbalancing.
+degradation that is encountered and scheduling based on least turnaround time of the sites which would help increase 
+the throughput of the overall Co-Scheduler which also loadbalances.
 
 Existing schedulers depend on the availability of resources and frequent polling 
 of it to determine the slots of scheduling. It should be noted that state of the art 
 schedulers like maui/torque, slurm, condor take into account only CPU as a 
 resource and the resources like RAM, I/O or Network are either ignored or 
-converted into a scalar values which isn't an effective way of tackling the multiple resource scheduling 
-problem as their true resource load measure is converted to processor equivalent or ignored. 
+their resource equivalent is converted into a scalar values which isn't an effective way of tackling the 
+multiple resource scheduling problem as this might result in scheduling excessive jobs 
+on single machine in case of schedulers ignoring the resource and loss of 
+effective resources when schedulers convert the resource allocation into scalar 
+values which means for example it'll be pre-assigned on every node that 1 CPU-CORE will have 2 GB of
+memory this kind of pre-assignment seems like its addressing the resource degradation of RAM but suffers 
+from the above mentioned problems.
 We take a turnaround time approach to measure degradation, we define a resource 
 to be degraded if and when we submit jobs that results in increasing the 
 turnaround time by 25\% . It must be 
 noted that there isn't explicit measurement of individual resources of RAM, I/O, 
-Network and CPU, there are no resource managers keeping track of these resource. 
+Network and CPU, there are no resource managers keeping track of these resource allocations. 
 The Co-Scheduler is driven by the fact that turnaround time increases when 
 concurrent jobs accessing these resources reaches a threshold value which in-turn causes 
 degradation and this is the basis for our scheduling.
@@ -137,13 +164,13 @@ degradation and this is the basis for our scheduling.
 
 One aspect to Co-Scheduler is degradation detection and management by adapting 
 to the throttling of resource another aspect is to efficiently distribute jobs 
-across multiple sites which increases the throughput of the Co-Scheduler
-. The Co-Scheduler adapts to degradation by backing off submission rates and waiting for random
+across multiple sites which increases the throughput of the workload
+.The Co-Scheduler adapts to degradation by backing off submission rates and waiting for random
 period of time for the next incremental submission and efficiently 
-distributes the jobs and load-balances across multiple sites submitting more 
+distributes the jobs and load-balances across multiple sites, thus submitting more 
 jobs to a site with lesser turnaround time and also ensuring to submit lesser 
 jobs to the sites with larger turnaround time thus efficiently load-balancing 
-across multiple sites on a grid.
+across multiple sites on a grid and improving throughput.
 
 Finally, Grid environment is a heterogeneous environment, its absolutely necessary
 to use API's that are available on all the systems across the grid. To implement such a Co-Scheduler
@@ -151,7 +178,7 @@ to use API's that are available on all the systems across the grid. To implement
 that submits to multiple sites concurrently and is aware of multiple-resource degradation and
 loadbalances efficiently across multiple sites of the grid. 
 
-Please note that all the references to the Co-Scheduler refers to the adaptive Co-Scheduler designed 
+Please note that all the references to the Co-Scheduler in this thesis refers to the adaptive Co-Scheduler designed 
 by me.  
 \section{Co-Scheduler}
 
@@ -218,10 +245,10 @@ mechanisms of Condor-G.\\
 
 \section{Comparison of existing mechanisms}
 There might be situations where we can have multiple condor pools and some of 
-the pools might be idle . To efficiently utilize the resources condor provides 
-some mechanisms like condor flocking and condor job router. These mechanisms 
+the pools might have many idle slots that are available for utilization. To efficiently utilize the resources across pools condor provides 
+mechanisms like condor flocking and condor job router. These mechanisms 
 provide similar functionality to the Co-Scheduler that I designed. In the following sections, we compare 
-and evaluate these mechanisms.
+and evaluate these mechanisms with the design and functionality of Co-Scheduler.
 
 \subsection{Condor Flocking}
 Flocking refers to a mechanism where jobs that cannot run in its own condor pool 
@@ -231,7 +258,7 @@ pointed out by Campus Grids Thesis[CITE 3.1.2]  flocking helps balance large wor
 necessarily the jobs across these pools because of the scavenging and greedy nature 
 of the condor scheduler.
 
-$condor\_schedd$ advertises that it has idle jobs to the remote $condor\_collector$ 
+\texttt{condor\_schedd} advertises that it has idle jobs to the remote \texttt{condor\_collector} 
 and during the next phase of negotiation, if its found that there are computers 
 available then they are allotted to the jobs in the matchmaking phase and the 
 jobs then run on the remote pools. It so appears and the local job queue maintains as if 
@@ -239,13 +266,14 @@ the jobs are running locally.
 
 Although Condor flocking has workflow balancing features across multiple condor 
 pools it isn't aware of the slower and faster sites/pools. The adaptive Co-Scheduler 
-keeps tabs on turnaround time and is aware of which site is faster and which site is slower.If we 
+keeps tabs on turnaround time and is aware of which site is faster or slower.If we 
 look at the idea that scavenging idle resources increases throughput, it does 
 but If we look at the case where jobs are greater than the available slots 
-across all the pools, condor flocking stops working here, its role is to only 
-scavenge idle computing slots across multiple pools. 
+across all the pools, condor flocking stops working here as deeper understanding of sites
+would be required here to push more jobs at faster sites and importantly push less jobs
+at slower sites, its role is to scavenge idle computing slots across multiple pools. 
 
-Another aspect where condor flocking might not fare well is when jobs are 
+Another aspect where condor flocking isn't designed to perform is when jobs are 
 contending for the same resource (CPU, RAM, I/O \& Network). Even though we'll be 
 having idle slots on remote pools, condor flocking might not be able to use those 
 slots as they'd be degraded because of the contention. In this case again 
@@ -254,9 +282,9 @@ amount of time for degradation to clear and doesn't put heave job load on the
 degraded resource and diverts the jobs elsewhere which in-turn increases the 
 throughput.
 
-To conclude, we can say that condor flocking provides features for balancing 
+To conclude, we can say that condor flocking provides features of balancing 
 large workflows and doesn't include features that would detect degradation in 
-the cluster and also lacks the features that would keep track of information of faster and 
+the cluster and also doesn't keep track of information of faster and 
 slower sites, which might be exploited to increase the overall throughput of the system. 
 
 \subsection{Condor Job Router}
@@ -264,7 +292,7 @@ slower sites, which might be exploited to increase the overall throughput of the
 Condor manual defines the functions of job router to be the following:
 \begin{quotation}
 
-The Condor Job Router is an add-on to the $condor\_schedd$ that transforms jobs from one type into 
+The Condor Job Router is an add-on to the \texttt{condor\_schedd} that transforms jobs from one type into 
 another according to a configurable policy. 
 This process of transforming the jobs is called job routing.
 \end{quotation}
@@ -272,7 +300,8 @@ This process of transforming the jobs is called job routing.
 Condor Job Router can transform vanilla universe jobs to grid universe jobs and 
 as it submits to multiple sites, the rate at which it starts submitting equals 
 rate at which the sites execute them thus providing platform to balance large 
-workflows across multiple grid sites. Job router sends more jobs to a site if 
+workflows across multiple grid sites and replenishing the jobs at
+faster sites once they get done. Job router sends more jobs to a site if 
 the jobs submitted are not idle and stops submitting jobs if the submitted jobs 
 sit idle on the remote cluster and Job router is not aware about which site is 
 faster of slower.
@@ -312,21 +341,290 @@ JOB_ROUTER_ENTRIES = \
 
 Condor Job Router seems to be a step up from the Condor Flocking in terms of 
 scavenging resources and sending the extra jobs to another condor pool. Condor 
-Job Router also maintains the rate of the jobs on remote clusters
+Job Router also maintains the rate of the jobs on submit hosts equal to that of remote clusters But the job 
+router does not keep track of how fast condor cluster is.Thus 
+condor job router does not optimize the displacement of jobs to slower 
+cluster, since it maintains the rate of submission of jobs, we can be sure that if a job is complete 
+at a faster site, its immediately replaced by the next one. The same is true for a job at slower site too
+which might result in increasing the degradation if there exists some, for example if the job router kept track of slower sites, it
+can send less jobs to slower sites there by increasing the overall throughput of the given workflow.
 
+A preliminary examination shows that condor job router does seem to have degradation detection features, 
+it does not submit to a pool that already has idle jobs but a close examination reveals that even though it
+submits to a pool with non-idle jobs it is't aware of the fact that the jobs in the queue would have 
+undergone degradation due to contention on same resource and thus isn't a viable mechanism for degradation detection.
+  
 \subsection{Co-Scheduler Solution}
+Due to the heterogeneous nature of the grid there could be problems with resource sharing on the grid I 
+came up with a solution that primarily solves the problem of degradation due to contention among 
+jobs for any given resource like RAM,I/O and network. The contention among jobs sometimes give rise to 
+degradation depending upon the availability of the resource that results in reduced performance of the cluster or crashes the cluster
+altogether.Efficient and high throughput
+distribution of jobs across multiple cluster is another challenging problem that we have solved in 
+this particular Co-Scheduler Solution. 
 
+In the first part of the solution we target the basic problem of degradation to give an example, suppose
+we have a file server that can serve 100 MBps of data which is available for concurrent access and user has submitted 100 jobs
+each consuming 10 MBps of data I/O if 100 slots of CPU slots are available a typical state of the art Scheduler
+schedules these 200 jobs without actually looking at the I/O load, this results in a degraded system, 
+overtime if more jobs are Scheduled to utilize this file server, this file serve might even crash.We would need a 
+degradation handling mechanism that would adaptively scale with the load and  exponentially 
+backoff during high contention period thus we need an intervention in the form
+of Co-Scheduler that intelligently handles degradation. 
+We start the capacity algorithm by submitting jobs to the cluster and measure 
+the turnaround time of each iteration if we find that the current turnaround 
+time if an iteration is 25\% greater than the previous iteration we term it as a 
+degradation. We now try to find the best capacity of jobs between the current 
+and the previous iteration by exponentially backing-off between these two iteration. We keep finding the optimal
+capacity dynamically for each iteration as the contention may change and optimal capacity keeps 
+ varying. Once the optimal capacity is found then it is retained for job submission for random amount of time
+ limited to maximum of ten iterations of jobs thus solving the problem of performance degradation. 
+ 
+    
+The other problem that we tackled was that of efficient distribution of work load to multiple sites of the 
+grid,
+some of these sites could be error prone, some of them could be faster some of them can be slower, we need to
+take an approach that improves the overall throughput of the workload, so we keep track of average turnaround
+ time for each batch of jobs submitted to the cluster. We take average of turnaround time of the batch of job that is submitted 
+ across multiple cluster we group turnaround times of these batches of jobs based on the value of the 
+ turnaround time to be greater than, lesser than or equal to the average turnaround time of all batch of jobs.
+ This gives us a classification of sites that run faster, we exploit this information in our scheduler. 
+ To implement multi-site jobs submission and load balancing feature we start submitting one job to each cluster 
+ and measure the turnaround time once the job returns. Now we have the information of turnaround time 
+ of a particular resource of all the clusters,although continuing to submit jobs concurrently in a similar manner
+  would result in the completion of
+ the workload in a non efficient manner, out of the list of all the turnaround time of different sites we take the 
+ sites
+ that have lower than the average turnaround time of all batches of jobs and increase the job propagation 
+ factor to these jobs which in-turn increases the number of jobs submitted to that site, which helps us efficiently distribute 
+ workload to faster clusters than the slower clusters ( submitting to faster site would enable us to submit 
+ more
+  number of jobs to the particular site. As the turnaround time is lower we would finish jobs quickly and make room for more number 
+  of jobs if we submit less to slower sites that can in turn help us improve the throughput to a greater extent by enabling us to stop
+  further degradation at those sites and help us submit more to faster sites .
+  ) 
+  Error handling mechanism is gracefully handled by 
+ condor and by this approach we have an efficient system with increased throughput and with proper distribution
+  of load across multiple clusters.  
+        
+ 
+ 
+ 
+ 
 %%A table of comparison among all three kinds of mechanisms
 
 
 
-\section{Turnaround based scheduling, IIT Roorkee}
+\section{Turnaround time based scheduling, IIT Roorkee}
 
 \chapter{Design and Implementation of Co-Scheduler}
-\section{Capacity based Co-Scheduling}
-\section{multi-site turnaround time Co-Scheduling}
+%(an image to showcase layer of position of co-scheduler)
+The co-scheduler requires the presence of a condor installation and libcondorapi.
+It is written in the C++ language and has extensively made use of pthreads for 
+synchronization and multithreading. The co-schedule has two components to it,the first one is capacity detection
+algorithm which is found by measuring degradation and other aspect to it is 
+multi-site workload distribution across grid .The following  paragraphs detail the 
+engineering aspect of the design.
+The program begins by taking number of jobs, sites information and submit script 
+information as its input. These number of jobs are the ones submitted across 
+multiple sites. The next input file contains information on the list of sites that can be used 
+for load balancing in the GridResource format of the condor ClassAds API, like \emph{tusker-gw1.unl.edu/jobmanager-pbs}.
+It is assumed that all the sites listed in the sites input file are working and 
+do not have any misconfiguration issues. The third and the final option to the 
+scheduler is the submit description file. All the job ClassAd information and 
+requirements can be written in this section and all of these will be applicable on the grid when a particular job is 
+scheduled. The two main important attributes required in the submit description 
+file is \emph{universe} which needs to be grid, all the time as we are submitting 
+to grid sites and the other most important thing is the 
+\emph{grid-proxy}. We need a proxy to delegate our identification on the grid. \emph{voms-proxy-init}
+is used to generate voms proxy at the submit host, we can specify \texttt{--voms} as our 
+virtual organization, hcc:/hcc in this case and \texttt{--hours} as the number of hours the proxy would be 
+active/valid, it must be ensured that the proxy period is approximately greater than the 
+length of period of runtime of jobs for smooth running of jobs.
+
+HTCondor-G is the grid environment, when jobs are sent across grid universe using 
+Globus software. Globus toolkit provides support for building grid systems. 
+Submitting, managing and executing jobs have same capabilities in both HTCondor 
+and HTCondor-G world. Globus provides fault tolerant features to HTCondor-G 
+jobs.GRAM is Grid Resource Allocation and Management protocol, supports remote 
+submission of computational request.
+
+gt2 is an initial GRAM protocol which is used in Globus Toolkit version 1 and 
+2. gt2 is also referred to as the pre-web services GRAM or GRAM2.
+
+gt5 is the latest GRAM protocol, which is an extension of GRAM2 and is intended 
+to be more scalable and robust, referred to as GRAM5.
+
+As we know that \texttt{condor\_wait} can be used to wait for a certain job or 
+number of jobs to complete, it watches the log file and sees if the completion 
+entry of the job is made in the log file that is generated by the \emph{log} 
+command in the condor submit description file. There are two options we can 
+specify to \texttt{condor\_wait} one is -num, number-of-jobs that waits
+till the number-of-jobs are completed and the other option is to specify -wait, seconds that 
+waits for seconds amount of time, if nothing is specified \texttt{condor\_wait} waits indefinitely till
+the job(s) are complete.
+
+\section{Capacity based scheduling}
+
+This algorithm detects degradation and once we detect degradation we find the 
+optimal capacity:
+
+\begin{algorithm}
+\begin{algorithmic}
+\STATE $c1 \gets 1.5$ 
+\COMMENT {c1: Job propagation factor}
+\STATE $c2 \gets 0.25$ 
+\COMMENT {c2: Degradation factor}
+\WHILE{true}
+
+\IF{T2 $<$ c2*T1}
+  \STATE $jobSubmission(k)$ 
+  %\COMMENT {Submit k jobs}
+  \STATE $T1=(T1+T2)/2$
+\ENDIF
+
+\IF{T2 $>$ c2*T1}
+  \STATE $degradation\_high \gets k$
+  \STATE $degradation\_low \gets k/2$
+  \STATE $optimalCapacity(degradation\_high,degradation\_low)$
+\ENDIF
+
+\ENDWHILE
+
+\end{algorithmic}
+\caption{Algorithm for determining optimal capacity by detecting degradation}
+\label{alg:Degradation Detection}
+\end{algorithm}
+
+
+\begin{algorithm}
+\begin{algorithmic}
+
+\STATE $mid \gets (high+low)/2$ 
+\STATE $k \gets mid$
+\STATE $jobSubmission(k)$ 
+
+\IF{T2 $<$ c2 * T1}
+\STATE $T1 \gets (T1+T2)/2$
+\STATE optimalCapacity(mid,high);
+\ENDIF  
+\IF{T2 $>$ c2 * T1}
+\STATE optimalCapacity(low,mid);
+\ENDIF
+\RETURN mid
+\end{algorithmic}
+\caption{Algorithm for determining optimal capacity by detecting degradation}
+\label{alg:optimalCapacity(high,low)}
+\end{algorithm}
+
+
+Diagram:
+
+\section{Multi-site load distribution based scheduling}
+Multi-site load distribution based scheduling uses the turnaround time at each 
+site for sending future jobs, its a threaded algorithm, the following is extracted function per thread:
+
+\begin{algorithm}
+\begin{algorithmic}
+
+\STATE $high \gets 0$
+\STATE $low \gets 0$
+\STATE $average \gets 0$
+
+\COMMENT {arrayMultipleSitesTime is populated with turnaround times of all sites}
+\STATE $arrayMultipleSitesTime.sort()$
+\STATE $low = arrayMultipleSitesTime.front()$
+\STATE $high = arrayMultipleSitesTime.back()$
+\STATE average = sum of all elements of arrayMultipleSitesTime / Size of arrayMultipleSitesTime
+
+\IF{turnaroundTime\_Thread $==$ low}
+\STATE $c1 \gets c1 * 4$
+\ENDIF
+
+\IF{turnaroundTime\_Thread $==$ high}
+\STATE $c1 \gets c1/2 ? (c1/2:1)$
+\ENDIF
+
+\IF{turnaroundTime\_Thread $<$ average}
+\STATE $c1 \gets c1 * 2$
+\ENDIF
+
+\end{algorithmic}
+\caption{Algorithm for distribution of workflow load across multiple sites on the grid}
+\label{alg:updateJobPropagationConstant()}
+\end{algorithm}
+
+
+\begin{figure}[htbp!]
+\begin{center}
+\includegraphics[scale=0.75]{images/multipleSites}
+\caption{Multi-site scheduling algorithm overview, classification of sites into slower and faster}
+\label{fig:multiSite1}
+\end{center}
+\end{figure}
+\FloatBarrier
+Diagram:
 \section{Programming APIs}
 \subsection{Condor Log Reader and User API}
+Constructor:
+ReadUserLog reader(fp,false,false);
+\begin{verbatim}
+ULogEventOutcome (defined in condor_event.h):
+
+Status events for job detection:
+
+ULOG_OK: Event is valid
+ULOG_NO_EVENT: No event occurred (like EOF)
+ULOG_RD_ERROR: Error reading log file
+ULOG_MISSED_EVENT: Missed event
+ULOG_UNK_ERROR: Unknown Error
+\end{verbatim}
+
+Job Submission Algorithm:
+
+\begin{lstlisting}
+void wait_calculate(string hostFile, args *data, int nSites)	{		
+		FILE *fp;
+		ReadUserLog reader(fp,false,false);
+		ULogEvent *event = NULL;		
+		if(reader.isInitialized())	{
+			cout<<"Initialized reading log file\n"<<flush;
+		}
+		else{
+			cout<<"ERROR! reading log file host.log"<<flush;
+		}
+              
+        while(reader.readEvent(event)==ULOG_OK)	{            
+            ostringstream cluster_proc;            
+            if((*event).eventNumber==ULOG_EXECUTE )	{                                
+                ExecuteEvent *exec 
+                = static_cast<ExecuteEvent*>(event);                                       
+                count++;
+                //condor_wait -num K, where K is the 
+                //amount of jobs completed till the wait.
+                               if(count<=N)	{
+                    char tmp[100];
+                    sprintf(tmp,"condor_wait -num 
+                    \%d \%s",count,hostFile.c_str());
+                    return_value=system(tmp);
+                }                                
+                continue;
+            }            
+            if((*event).eventNumber==ULOG_JOB_TERMINATED)	{                
+                JobTerminatedEvent *term 
+                = static_cast<JobTerminatedEvent*>(event);                
+                
+                if(term->normal)	{                    
+                    //Works only for local jobs, 
+                    //find the CPU time of local jobs
+                }               
+            }
+        }
+        
+		fclose(fp);
+	}
+
+\end{lstlisting}
 \subsection{Synchronization Co-Scheduler Code}
 
 \chapter{Evaluation}
