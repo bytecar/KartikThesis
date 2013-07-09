@@ -2,26 +2,25 @@
 \contentsline {chapter}{List of Figures}{vii}{section*.2}
 \contentsline {chapter}{List of Tables}{viii}{section*.3}
 \contentsline {chapter}{\chapternumberline {1}Introduction}{1}{chapter.1}
-\contentsline {section}{\numberline {1.1}Co-Scheduler}{4}{section.1.1}
 \contentsline {chapter}{\chapternumberline {2}Background}{5}{chapter.2}
 \contentsline {section}{\numberline {2.1}High-Throughput Computing}{5}{section.2.1}
 \contentsline {section}{\numberline {2.2}HTCondor}{5}{section.2.2}
 \contentsline {section}{\numberline {2.3}Open Science Grid}{6}{section.2.3}
 \contentsline {section}{\numberline {2.4}Grid Computing}{7}{section.2.4}
-\contentsline {section}{\numberline {2.5}Globus}{7}{section.2.5}
-\contentsline {section}{\numberline {2.6}Batch Scheduling}{8}{section.2.6}
-\contentsline {chapter}{\chapternumberline {3}Related Work}{9}{chapter.3}
-\contentsline {section}{\numberline {3.1}Comparison of existing mechanisms}{9}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Condor Flocking}{9}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Condor Job Router}{11}{subsection.3.1.2}
-\contentsline {subsection}{\numberline {3.1.3}Co-Scheduler Solution}{13}{subsection.3.1.3}
-\contentsline {section}{\numberline {3.2}Turnaround time based scheduling, IIT Roorkee}{15}{section.3.2}
-\contentsline {chapter}{\chapternumberline {4}Design and Implementation of Co-Scheduler}{16}{chapter.4}
-\contentsline {section}{\numberline {4.1}Capacity based scheduling}{17}{section.4.1}
-\contentsline {section}{\numberline {4.2}Multi-site load distribution based scheduling}{18}{section.4.2}
-\contentsline {section}{\numberline {4.3}Programming APIs}{19}{section.4.3}
-\contentsline {subsection}{\numberline {4.3.1}Condor Log Reader and User API}{19}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {4.3.2}Synchronization Co-Scheduler Code}{22}{subsection.4.3.2}
-\contentsline {chapter}{\chapternumberline {5}Evaluation}{23}{chapter.5}
-\contentsline {chapter}{\chapternumberline {6}Conclusion}{24}{chapter.6}
-\contentsline {chapter}{Bibliography}{25}{section*.8}
+\contentsline {section}{\numberline {2.5}Globus}{9}{section.2.5}
+\contentsline {chapter}{\chapternumberline {3}Related Work}{11}{chapter.3}
+\contentsline {section}{\numberline {3.1}Comparison of existing mechanisms}{11}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Condor Flocking}{11}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Condor Job Router}{13}{subsection.3.1.2}
+\contentsline {chapter}{\chapternumberline {4}Adaptive Co-Scheduler For Highly Dynamic Resources}{16}{chapter.4}
+\contentsline {section}{\numberline {4.1}Introduction}{16}{section.4.1}
+\contentsline {section}{\numberline {4.2}Degradation detection and Capacity based scheduling}{17}{section.4.2}
+\contentsline {section}{\numberline {4.3}Multi-site load distribution based scheduling}{17}{section.4.3}
+\contentsline {section}{\numberline {4.4}Implementation of Capacity based scheduling}{20}{section.4.4}
+\contentsline {section}{\numberline {4.5}Implementation of Multi-site load distribution based scheduling}{21}{section.4.5}
+\contentsline {section}{\numberline {4.6}Programming APIs}{22}{section.4.6}
+\contentsline {subsection}{\numberline {4.6.1}Condor Log Reader and User API}{22}{subsection.4.6.1}
+\contentsline {subsection}{\numberline {4.6.2}Synchronization Co-Scheduler Code}{25}{subsection.4.6.2}
+\contentsline {chapter}{\chapternumberline {5}Evaluation}{27}{chapter.5}
+\contentsline {chapter}{\chapternumberline {6}Conclusion}{28}{chapter.6}
+\contentsline {chapter}{Bibliography}{29}{section*.11}
