@@ -22,5 +22,5 @@
 \contentsline {subsection}{\numberline {4.6.1}Condor Log Reader and User API}{22}{subsection.4.6.1}
 \contentsline {subsection}{\numberline {4.6.2}Synchronization Co-Scheduler Code}{25}{subsection.4.6.2}
 \contentsline {chapter}{\chapternumberline {5}Evaluation}{27}{chapter.5}
-\contentsline {chapter}{\chapternumberline {6}Conclusion}{28}{chapter.6}
-\contentsline {chapter}{Bibliography}{29}{section*.11}
+\contentsline {chapter}{\chapternumberline {6}Conclusion}{32}{chapter.6}
+\contentsline {chapter}{Bibliography}{34}{section*.14}

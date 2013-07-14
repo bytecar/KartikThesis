@@ -87,42 +87,35 @@ backgroundcolor=\color{light-grey}
 \doctype{Thesis}\degree{Master Of Science}\degreeabbreviation{M.S}
 \maketitle
 
-\begin{abstract}Schedulers come with a plethora of features and 
-options for customization that fulfill myriad goals of  
-clusters and data centers . Most state of the art schedulers do not take into account load on resources 
-like RAM, Disk I/O or Network I/O for scheduling purposes \cite{pbstorque}. 
-This is as much true for the local schedulers as much it is for the grid. On the 
-grid there could be different schedulers on different sites and we cannot rely 
-upon features of one kind of scheduler to characterize the nature and features of scheduling.
-There are many kinds of scientific applications that are run on the clusters and 
-grid. Some might make use of Disk I/O largely and some might need large amounts 
-of RAM\cite{hccwebsite}. Unchecked use of these resource will give rise to several issues on the cluster. 
-
-One such issue is when resources like RAM, Disk I/O or Network I/O is
-used in an unchecked manner and performance degradation that occurs as a result of it. Further 
-scheduling jobs that claim the degraded resources could overwhelm the resource 
-to an extent that the resource will finally stop responding or crash the system\cite{hccwebsite}.
-Often there is a need to extend these schedulers to solve 
-situations arising from these new use cases either by writing a plugin for existing schedulers or by Co-Scheduling. 
-
-With an increase in the number of entities concurrently using the resource, there is a 
-need to monitor and schedule concurrent and unmanaged access to any given resource to prevent 
-degradation.These issues that we encounter in real life at Holland Computing Center \cite{hccwebsite} are the 
-basis and motivation for tackling this problem and develop an adaptive approach for scheduling 
-that is aware of multi-resource degradation 
-detection, load-balancing across multiple sites and  with a goal to run clusters at high efficiency and share resources fluidly.
- 
+\begin{abstract} There are many kinds of scientific applications that are run on high throughput computational (HTC) 
+grids\cite{hccwebsite}. HTC may utilize clusters opportunistically, only running on a given cluster 
+when it is otherwise idle. These widely dispersed HTC clusters are heterogeneous in terms of 
+capability and availability, but can provide significant computing power in aggregate. The scientific 
+algorithms run on them also vary greatly. Some scientific algorithms might use high rates of disk I/O 
+and some might need large amounts of RAM. Most schedulers only consider cpu availability, but 
+unchecked demand on these associated resources may give rise to several issues on the cluster.On the grid there could be different schedulers on different sites and we cannot rely upon features 
+of one kind of scheduler to characterize the nature and features of every job. Most state of the art 
+schedulers do not take into account resources like RAM, Disk I/O or Network I/O. This is as true for the
+ local schedulers as much it is for the grid. Often there is a need to extend these schedulers to solve 
+ situations arising from new and/or complex use cases either by writing a plugin for existing schedulers or by Co­Scheduling. 
+ A key issue is when resources like RAM, Disk I/O or Network I/O are used in an unchecked manner and 
+ performance degrades as a result of it. Further scheduling jobs that claim the degraded resources could 
+ overwhelm the resource to an extent that the resource will finally stop responding or the system will crash. With an increase in the number of entities concurrently using the resource, there is a need to monitor and schedule concurrent and unmanaged access to any given resource to prevent  degradation. These issues that we encounter in real life at the Holland Computing Center \cite{hccwebsite} 
+are the basis and motivation for tackling this problem and for developing an adaptive approach for scheduling. 
+This co-scheduler must be aware of multi­-resource degradation, balance load across multiple sites and 
+run clusters at high efficiency and share resources fluidly. An initial implementation in use at HCC will 
+be evaluated and presented. 
   \end{abstract}
 %\begin{dedication}%Dedicated to %\end{dedication}
 \begin{acknowledgments}First and the foremost, I would like to thank my advisor Dr. David Swanson. Throughout my research
 and writing he's been a constant source of support for me. His guidance and teachings have helped not 
-only to shape my thesis but also all walks of my life. I thank David for identifying this interesting
+only to shape my thesis but also in all walks of my life. I thank David for identifying this interesting
 research problem and bringing it to me. His hard work has been constant source of inspiration
 for me. I'd like to thank Derek Weitzel for working with me to solve the 
  issues with grid submissions and for helping me with his technical expertise.
  
  I'd like to take this opportunity to thank the entire team at Holland 
-Computing Center for providing me with the required resources, support and advise
+Computing Center for providing me with the required resources, support and continuous advise
  even after I broke their systems. Its been a wonderful experience 
  working with these folks.
  \end{acknowledgments}
@@ -714,11 +707,11 @@ ULOG_UNK_ERROR: Unknown Error
 \end{verbatim}
 
 All the entries in the log file end with \texttt{...}. All the job 
-log entries as named as events and these events could range form being  \texttt{ULOG\_OK} where 
+log entries are named as events and these events could range form being  \texttt{ULOG\_OK} where 
 the event has taken place and is valid to \texttt{ULOG\_UNK\_ERROR} where an error has 
 taken place.
 
-The following pseudo-code is an extract from the logReader function that first 
+The following pseudo-code is an extract from the logReader module that first 
 detects all the valid events and then based on the data-structure of the event 
 object detects if the event kind is \texttt{ULOG\_EXECUTE} meaning the job has begun 
 executing via eventNumber data member. Finally we detect the \texttt{ULOG\_JOB\_TERMINATED} 
@@ -762,9 +755,9 @@ void logReader(string hostFile, args *data, int nSites)	{
 \subsection{Synchronization Co-Scheduler Code}
 
 There are critical sections in the code where synchronization becomes absolutely 
-necessary. One such variable is number of jobs. Number of jobs executed across 
+necessary. One such variable is number-of-jobs. Number of jobs executed across 
 the sites should remain fixed and the value must match the value that has been 
-given as input. In a threaded system where each thread is executing on a 
+given as input. In a threaded system where each thread is executing jobs on a 
 different cluster it becomes necessary to define \texttt{N}, number of jobs executed or executing as a 
 critical section. Here we define a pthread mutex and lock it for all write accesses to the \texttt{N}
 and serialize the access to \texttt{N} and make conditional checks during job submission, not to allow
@@ -791,7 +784,7 @@ pthread_mutex_unlock (&mymutex);
 Another section of code where synchronization becomes important is while 
 distributing the jobs to multiple sites. We're measuring which cluster is 
 faster, in doing so we need information of turnaround time from all the sites 
-before proceeding that means all the threads need to be executing a line of code 
+before proceeding which means all the threads need to be executing a line of code 
 before proceeding with the further program. Thus the absolute need for 
 synchronization. To handle this problem we make use of conditional variable of 
 pthread. The following chunk of code demonstrates the use of conditional wait 
@@ -840,11 +833,130 @@ all the waiting threads and the scheduling proceeds further to asynchronously sc
 
 \chapter{Evaluation}
 
+We evaluate the degradation algorithm by the distribution of turnaround time. The turnaround 
+time of all the jobs when run using co-scheduler and the turnaround time of all 
+the jobs when run directly on the cluster using the condor-g grid interface.
 
+If an NFS server has the capacity to serve 50 clients without degradation it
+implies the turnaround time of all the jobs on the 50 clients are within the 
+limits that would not be a degraded turnaround time. If the same NFS server is forced to serve 200 
+clients then we would see a degradation and would see an increase in the turnaround time of the jobs
+that are now contending for the I/O. This would result in degraded turnaround time and 
+the same jobs would have to take lot more time to complete which is the usual 
+scenario that occurs at Holland Computing Center when large amount of I/O bound 
+jobs are submitted to the cluster and there is no check on the usage and the 
+capacity of the I/O resource.
+
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{images/tusker_histogram}
+\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Tusker cluster}
+\label{fig:tusker_histogram}
+\end{center}
+
+\begin{center}
+\includegraphics{images/tusker_jobgoodput}
+\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted}
+\label{fig:tusker_jobgoodput}
+\end{center}
+
+\end{figure}
+\FloatBarrier
+
+In figure \ref{fig:tusker_histogram}  considerable jobs take more than 2500 seconds to complete. 
+When the resource is not degraded the test Job takes approximately 300-500 seconds of time.Tusker is 
+currently running Lustre filesystem. If the capacity of the filesystem permitted 
+to serve 375 jobs(or the number of jobs running concurrently) then most jobs 
+would be completed within 500 seconds of time but that isn't the case with the 
+tusker and hence we can conclude the resultant graph is the cause of degradation 
+of disk I/O resource.
+
+The test I/O job used in this experiment continuously does disk write operations for a given period of time, the average
+time being 300-500 seconds when run on different resources. There are two 
+clusters under consideration, Sandhills and tusker. 375 jobs are run on each of 
+the clusters and then a separate set of 375 jobs are scheduled using 
+Co-Scheduler. We measure the extent of degradation on each cluster and quantitatively 
+determine how degradation is handled by the coscheduler.
+
+
+\begin{figure}[htbp!]
+\begin{center}
+\includegraphics{images/coscheduler_histogram}
+\caption{Histogram showing turnaround time distribution of 375 Jobs, when run using a coscheduler}
+\label{fig:coscheduler_histogram}
+\end{center}
+
+\begin{center}
+\includegraphics{images/coscheduler_jobgoodput}
+\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted}
+\label{fig:coscheduler_jobgoodput}
+\end{center}
+
+
+\end{figure}
+\FloatBarrier
+
+In figure \ref{fig:coscheduler_histogram} we can see most of the jobs take about 
+500 seconds of time to complete. We've prevented excessive degradation here and 
+the I/O resources serve the concurrent jobs without a degraded turnaround time. 
+This reduces the total time taken for the execution of this batch of jobs 
+making way for the use of cluster for other jobs that might need computing.
+
+
+\begin{figure}[htbp!]
+\begin{center}
+\includegraphics{images/multisite_load}
+\caption{Bar plot showing load distribution}
+\label{fig:multisite_load}
+\end{center}
+\end{figure}
+\FloatBarrier
+
+
+In figure \ref{fig:multisite_load}, multi-Site load distribution algorithm distributes the job based on the 
+turnaround time and load on the cluster, the following was the distribution of jobs when run 
+on coscheduler with 750 Jobs.
 
 
 \chapter{Conclusion}
 
+Co-Scheduling on the Grid could be challenging with the presence of dynamic 
+resources like Network, RAM, compute resources and the varying nature of resources
+that are available opportunistically. The current Co-Scheduler 
+detects degradation and taxes degraded resources less in terms of scheduling 
+more jobs to the degraded resources. The capacity of the cluster is a varying 
+quantity that determines the amount of concurrent jobs that may run without 
+degradation. Co-Scheduler successfully finds the capacity of the cluster and 
+maintains the capacity to up-to 10 successive iterations of the scheduler before 
+recalculating the capacity.
+
+With the assumption of the availability of cluster(s)(Which means further queue wait time is 
+absent), the Co-Scheduler improves throughput of the job set which handles the 
+case of degradation by virtue of multi-site job distribution algorithm also 
+because Co-Scheduler directly effects the load on the resource, Co-Scheduler 
+ensures the average turnaround time per job is lower.
+
+Resource management is completely abstracted. We do not need to consider the 
+allocation and management of disk I/O or RAM or Network I/O. The Co-Scheduler is 
+driven by the fact that whenever a resource(s) is overloaded it results in 
+degradation and subsequently does not respond or crashes. Making it a simple and 
+efficient way of tracking degradation and further monitoring the load of 
+resources on the cluster. As much as this is a positive aspect of the 
+Co-Scheduler the downside is there isn't a way to tell which of the resource is 
+the cause of the degradation, it could be either disk I/O or RAM or Network I/O, 
+because the Co-Scheduler is used with large workloads its usually known based on 
+the workload the resource that is under stress.
+
+While Co-Scheduling offers multiple enhancements for the users of large workload 
+there are some of the downsides of it. Co-Scheduler submits the jobs stepwise in 
+the sense that it submits a smaller set of jobs and waits for its outcome. This 
+nature of Co-Scheduler can accumulate lot of queue wait time if the availability 
+of the compute resources are lower. In the multi-site load distribution 
+algorithm if one of the sites has very low availability the Co-Scheduler would 
+accumulate the queue wait time of that particular site before it can complete 
+its execution. The pre-emption of jobs and rescheduling to enhance such 
+behaviour is part of the future work.
 %% backmatter is needed at the end of the main body of your thesis to%% set up page numbering correctly for the remainder of the thesis\backmatter%% Start the correct formatting for the appendices\appendix
 %% Appendices go here (if you have them)
 %% Bibliography goes here (You better have one)%% BibTeX is your friend%% Index go here (if you have one)
