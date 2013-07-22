@@ -1,6 +1,5 @@
 \contentsline {chapter}{Contents}{v}{section*.1}
 \contentsline {chapter}{List of Figures}{vii}{section*.2}
-\contentsline {chapter}{List of Tables}{ix}{section*.3}
 \contentsline {chapter}{\chapternumberline {1}Introduction}{1}{chapter.1}
 \contentsline {chapter}{\chapternumberline {2}Background}{5}{chapter.2}
 \contentsline {section}{\numberline {2.1}High-Throughput Computing}{5}{section.2.1}
@@ -23,5 +22,9 @@
 \contentsline {subsection}{\numberline {4.6.1}HTCondor Log Reader and User API}{22}{subsection.4.6.1}
 \contentsline {subsection}{\numberline {4.6.2}Synchronization Co-Scheduler Code}{25}{subsection.4.6.2}
 \contentsline {chapter}{\chapternumberline {5}Evaluation}{27}{chapter.5}
-\contentsline {chapter}{\chapternumberline {6}Conclusion}{35}{chapter.6}
-\contentsline {chapter}{Bibliography}{37}{section*.17}
+\contentsline {section}{\numberline {5.1}Introduction}{27}{section.5.1}
+\contentsline {section}{\numberline {5.2}Evaluation of Co-Scheduler on Tusker cluster}{29}{section.5.2}
+\contentsline {section}{\numberline {5.3}Evaluation of Co-Scheduler on independent NFS server}{31}{section.5.3}
+\contentsline {section}{\numberline {5.4}Scalability Analysis of the Co-Scheduler}{36}{section.5.4}
+\contentsline {chapter}{\chapternumberline {6}Conclusion}{37}{chapter.6}
+\contentsline {chapter}{Bibliography}{39}{section*.16}

@@ -121,7 +121,7 @@ Computing Center for providing me with the required resources, support and conti
  \end{acknowledgments}
 
 \tableofcontents
-\newpage\listoffigures\listoftables
+\newpage\listoffigures%\listoftables
 
 
 %%   mainmatter is needed after the ToC, (LoF, and LoT) to set the%%   page numbering correctly for the main body\mainmatter\chapter{Introduction}
@@ -178,7 +178,7 @@ degradation and this is the basis for this work.
 \caption{Degradation occurrence: Co-Scheduling}
 \label{fig:degradationdetect-intro}
 \end{center}
-\end{figure}
+\end{figure}ee
 
 One aspect to Co-Scheduler is degradation detection and management by adapting 
 to the throttling of a resource, another aspect is to efficiently distribute jobs 
@@ -707,7 +707,7 @@ turnaround time for the purpose of multi-site load distribution algorithm.
 \end{center}
 \end{figure}
 \FloatBarrier
-Diagram:
+
 \section{Programming APIs}
 \subsection{HTCondor Log Reader and User API}
 
@@ -861,6 +861,7 @@ dude to bad sites for future work.
 
 \chapter{Evaluation}
 
+\section{Introduction}
 We evaluate the degradation detection algorithm by the distribution of turnaround time. The turnaround 
 time of all the jobs when run using co-scheduler and the turnaround time of all 
 the jobs when run directly on the cluster using the condor-g grid interface were both investigated.
@@ -874,6 +875,8 @@ the same jobs would have to take lot more time to complete which is the usual
 scenario that occurs at Holland Computing Center when large amount of I/O bound 
 jobs are submitted to the cluster and there is no check on the usage and the 
 capacity of the I/O resource.
+
+\newpage
 
 In this evaluation, we've submitted 375 jobs to a cluster tusker using bulk 
 condor-g submission and then submitting it through the co-scheduler so that we 
@@ -900,7 +903,8 @@ that plot an area graph w.r.t the turnaround time. It provides a good way to
 visualize the turnaround time. Ideally the area under the curve must be minimum 
 in case of a non degraded graph but in a graph that projects degradation the 
 area under the curve is larger than its non-degraded counterpart.
-
+\newpage
+\section{Evaluation of Co-Scheduler on Tusker cluster}
 Figure \ref{fig:tusker_histogram} shows how there exists a large variance in 
 turnaround time by having a larger turnaround time than that present in figure 
 \ref{fig:coscheduler_histogram}. The former was the result of bulk submission 
@@ -928,6 +932,8 @@ resolves degradation to a larger extent as noted in figure
 
 \end{figure}
 \FloatBarrier
+
+\section{Evaluation of Co-Scheduler on independent NFS server}
 
 The test I/O job used in this experiment continuously does disk write operations for a given period of time, the average
 time taken by the program being 300-500 seconds when run on different resources and generated approximately 3 GB of data file
@@ -1030,6 +1036,20 @@ because of the lower availability which can be noted by the throughput informati
 For tusker the throughput was 47.2 CPU time hours/elapsed time hours and for 
 sandhills it was 3.12 CPU time hours/elapsed time hours.
 
+\section{Scalability Analysis of the Co-Scheduler}
+
+The Co-Scheduler is architected in a way so that each thread is responsible for 
+dispatching jobs on a given site. The Co-Scheduler can potentially spawn thousands 
+of threads and serve them efficiently but there are only hundreds of OSG sites 
+to run on. Essentially it can scale to all the sites of the OSG. 
+
+Co-Scheduler can take large number of jobs as input, of the order of hundreds 
+of thousands of jobs and dispatch the jobs efficiently with the load-balancing 
+algorithm and ensures to run these jobs without incurring degradation.
+
+Co-Scheduler is a robust program written in C++ that schedules based on 
+turnaround time to detect degradation and schedules based on  (queue wait time + 
+run-time) for the sake of load balancing purpose.
 
 \chapter{Conclusion}
 
