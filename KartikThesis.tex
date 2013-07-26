@@ -87,8 +87,8 @@ backgroundcolor=\color{light-grey}
 \doctype{Thesis}\degree{Master Of Science}\degreeabbreviation{M.S}
 \maketitle
 
-\begin{abstract} There are many kinds of scientific applications that are run on high throughput computational (HTC) 
-grid. HTC may utilize clusters opportunistically, only running on a given cluster 
+\begin{abstract} There are many kinds of scientific applications that run on high throughput computational (HTC) 
+grids. HTC may utilize clusters opportunistically, only running on a given cluster 
 when it is otherwise idle. These widely dispersed HTC clusters are heterogeneous in terms of 
 capability and availability, but can provide significant computing power in aggregate. The scientific 
 algorithms run on them also vary greatly. Some scientific algorithms might use high rates of disk I/O 
@@ -100,23 +100,23 @@ schedulers do not take into account resources like RAM, Disk I/O or Network I/O.
  situations arising from new and/or complex use cases either by writing a plugin for existing schedulers or by Co­Scheduling. 
  A key issue is when resources like RAM, Disk I/O or Network I/O are used in an unchecked manner and 
  performance degrades as a result of it. Further scheduling jobs that claim the degraded resources could 
- overwhelm the resource to an extent that the resource will finally stop responding or the system will crash. With an increase in the number of entities concurrently using the resource, there is a need to monitor and schedule concurrent and unmanaged access to any given resource to prevent  degradation. These issues that we encounter in real life at the Holland Computing Center 
+ overwhelm the resource to an extent that the resource will finally stop responding or the system will crash. With an increase in the number of entities concurrently using the resource, there is a need to monitor and schedule concurrent and unmanaged access to any given resource to prevent  degradation. These issues that we encounter in real life at the Holland Computing Center 
 are the basis and motivation for tackling this problem and for developing an adaptive approach for scheduling. 
 This co-scheduler must be aware of multi­-resource degradation, balance load across multiple sites and 
-run clusters at high efficiency and share resources fluidly. An initial implementation in use at HCC will 
+run clusters at high efficiency and share resources fluidly. An initial implementation tested at HCC will 
 be evaluated and presented. 
   \end{abstract}
 %\begin{dedication}%Dedicated to %\end{dedication}
 \begin{acknowledgments}First and foremost, I would like to thank my advisor Dr. David Swanson. Throughout my research
 and writing he's been a constant source of support for me. His guidance and teachings have helped not 
 only to shape my thesis but also in all walks of my life. I thank David for identifying this interesting
-research problem and bringing it to me. His hard work has been constant source of inspiration.
+research problem and bringing it to me. His hard work has been a constant source of inspiration.
  I'd like to thank Derek Weitzel for working with me to solve the 
  issues with grid submissions and for helping me with his technical expertise.
  
  I'd like to take this opportunity to thank the entire team at Holland 
 Computing Center for providing me with the required resources, support and continuous advise
- even after I broke their systems. Its been a wonderful experience 
+ even after I broke their systems. It has been a wonderful experience 
  working with these folks.
  \end{acknowledgments}
 
@@ -125,28 +125,26 @@ Computing Center for providing me with the required resources, support and conti
 
 
 %%   mainmatter is needed after the ToC, (LoF, and LoT) to set the%%   page numbering correctly for the main body\mainmatter\chapter{Introduction}
-Grid Computing as defined by Ian Foster in his paper The Anatomy Of the Grid \cite{Foster:2001:AGE:1080644.1080667}
-states that 
+Ian Foster states in his paper The Anatomy Of the Grid \cite{Foster:2001:AGE:1080644.1080667} that 
 \emph{Grid computing is about controlled sharing of resources with resource owners enforcing policies 
 on the owned resources.} The resources come in the form of hardware 
 and software that allows us to submit jobs, run the jobs and monitor the jobs on the grid. 
 Universities usually have multiple clusters across their campus and these are 
 usually owned by different departments but stand united under the banner of the university.
-Campus grids can be thought of as mini grids in which jobs are spanned across multiple clusters
- based on the need of the user and available computing infrastructure within the computing resources across the university then often overflowed to the national
+Campus grids are mini grids where jobs are spanned across multiple clusters
+ based on the need of the user and available resources with provision for jobs to overflow to the national
 grid infrastructure\cite{derekThesis}.
 
 Modern schedulers used in clusters provide numerable features for policy making, resource management 
 and scheduling. The problem of cluster 
-performance degradation that occurs when one of the resources is throttled is a problem that hasn't been 
-addressed. The problem of performance degradation when many jobs are scheduled on a single system 
-are either based on processor equivalence or based on the number of processor slots. Some of 
-these schedulers like maui \cite{pbstorque} are sophisticated enough to take into account contention of other 
+performance degradation that occurs when one of the resources is overwhelmed is a problem that hasn't been 
+addressed. This problem occurs when many jobs are scheduled on a single system. Some of 
+the schedulers like maui \cite{pbstorque} are sophisticated enough to take into account contention of other 
 resources like RAM but ultimately convert the 2D vector values of CPU and RAM 
-into a single scalar value which in-practice hard-codes the value or presents these resources
+into a single scalar value. In-practice this hard-codes the value or presents these resources
 in a fixed ratio which makes us question effectiveness of such scheduling mechanisms. 
 
-At Holland Computing Center present in University of Nebraska-Lincoln, we're 
+At Holland Computing Center of the University of Nebraska-Lincoln, we're 
 tackling this issue of cluster degradation caused by 
 over exploitation of one or more resources. 
 The proposed solution adaptively schedules 
@@ -159,15 +157,14 @@ of it to determine the slots for scheduling. It should be noted that state of th
 schedulers like maui/torque, slurm, condor take into account only CPU as a 
 resource and the resources like RAM, Disk I/O or Network I/O are either ignored or 
 their resource equivalent is converted into a scalar value which isn't an effective way of tackling the 
-multiple resource scheduling problem .This might result in scheduling excessive jobs 
-on single machine. In some schedulers, for example it'll be pre-assigned on every node that 1 CPU-CORE will have 2 GB of
+multiple resource scheduling problem. This might result in scheduling excessive jobs 
+on a single machine. In some schedulers, for example it'll be pre-assigned on every node that 1 CPU-CORE will have 2 GB of
 memory. This kind of pre-assignment seems like it's addressing the resource degradation of RAM but suffers 
-from the above mentioned problems.
-We take a turnaround time approach to measure degradation, we define a resource 
+from the above mentioned problems. We take a turnaround time approach to measure degradation. We define a resource 
 to be degraded if and when we submit jobs that results in increasing the 
 turnaround time by 25\% . It must be 
 noted that there isn't explicit measurement of status of individual resources like RAM, Disk I/O, 
-Network I/O. Since, there are no resource managers keeping track of these resource allocations. 
+Network I/O, since there are no resource managers keeping track of these resource allocations. 
 The Co-Scheduler is driven by the fact that turnaround time increases when 
 concurrent jobs accessing these resources reach a threshold value which in-turn causes 
 degradation and this is the basis for this work.
@@ -178,13 +175,12 @@ degradation and this is the basis for this work.
 \caption{Degradation occurrence: Co-Scheduling}
 \label{fig:degradationdetect-intro}
 \end{center}
-\end{figure}ee
+\end{figure}
 
 One aspect to Co-Scheduler is degradation detection and management by adapting 
-to the throttling of a resource, another aspect is to efficiently distribute jobs 
-across multiple sites which increases the throughput of the workload
-. The Co-Scheduler adapts to degradation by backing off submission rates and waiting for a 
-period of time (till the detection of optimal capacity) for the next incremental submission.It efficiently 
+to the throttling of a resource. Another aspect is to efficiently distribute jobs 
+across multiple sites which increases the throughput of the workload. The Co-Scheduler adapts to degradation by backing off submission rates and waiting for a 
+period of time (till the detection of a target capacity) for the next incremental submission. It efficiently 
 distributes the jobs and load-balances across multiple sites, thus submitting more 
 jobs to a site with lesser turnaround time and also ensuring to submit lesser 
 jobs to the sites with larger turnaround time. This efficiently load-balances 
@@ -192,7 +188,7 @@ across multiple sites on a grid and improves throughput because the loads may va
 The capacity of jobs the cluster can efficiently run without degradation needs to be detected and updated again and 
 again after a given period of time.
 
-In the figure \ref{fig:degradationdetect-intro}, with C1 called job propagation factor and k the initial number of 
+In figure \ref{fig:degradationdetect-intro}, with C1 called job propagation factor and k the initial number of 
 jobs submitted we can see that on each iteration we're adding $k = C1 * k$ jobs, and on the
 next iteration, if we have a degraded system, then we submit $k=k/C1$ amount of 
 jobs by backing off on the amount of jobs submitted.
@@ -201,7 +197,7 @@ Finally, since the grid environment is a heterogeneous environment, it's absolut
 to use APIs that are available on all the systems across the grid. To implement such a Co-Scheduler
  we limit ourselves to condor based clusters and utilize libcondorapi. The result is a threaded Co-Scheduler 
 that submits to multiple sites concurrently and is aware of multiple-resource degradation and
-loadbalances efficiently across multiple sites of the grid. 
+load-balances efficiently across multiple sites of the grid. 
 
 Please note that all the references to the Co-Scheduler in this thesis refers to the adaptive Co-Scheduler designed 
 by us.  
@@ -209,10 +205,10 @@ by us.
 
 \section{High-Throughput Computing} High Throughput Computing (HTC) is defined as 
 a computing environment that delivers large amounts of computational
-power over a long period of time.  The important factor being over a long period of time which 
-differentiates HTC from HPC which focuses on getting large amount of work done in a small amount of time.
+power over a long period of time. The important factor being over a long period of time which 
+differentiates HTC from HPC which focuses on getting a large amount of work done in a small amount of time.
 The workloads that run on condor systems don't have an objective of  how fast the job can be completed 
-but how many times can the job be run in the next few months.In another definition of HTC, European Grid  
+but how many times can the job be run in the next few months. In another definition of HTC, European Grid  
 Infrastructure defines HTC as a computing paradigm that focuses on the efficient 
 execution of a large number of loosely coupled tasks \cite{manual56}. One such 
 distributed computing software providing High-Throughput Computing services is 
@@ -225,10 +221,9 @@ that foster research computing and enables sites to share computing resources on
 idle computers at a given site. HTCondor includes a batch queuing 
 system, scheduling policy, priority scheme, and resource classifications for a pool of 
 computers, which is mainly used for compute-intensive jobs. HTCondor runs on both
- UNIX and Windows based workstations that are all connected by a network.  
-Although there are other batch schedulers out there for dedicated machines. 
+ UNIX and Windows based workstations that are all connected by a network, although there are other batch schedulers out there for dedicated machines. 
 The power of condor comes from  the fact that  the amount of compute power 
-represented by sum total of all the 
+represented by the sum total of all the 
  non-dedicated desktop workstations sitting on people's desks is sometimes far 
  greater than the compute power of a dedicated central resource. There are many 
  unique tools and capabilities in HTCondor which make utilizing resources from 
@@ -244,14 +239,13 @@ represented by sum total of all the
 
 As the cost of computers and the network connecting them is decreasing, there is movement towards a 
 paradigm shift in computing with the clustering of geographically distributed 
-resource. The goal of which is to provide a 
-service oriented infrastructure  with organizations like the Grid community and Global Grid Forum 
-constantly trying to invest effort in making Grid a platform with standard 
+resources. The goal of this is to provide a 
+service oriented infrastructure. Organizations like the Grid community and Global Grid Forum are constantly investing effort in making Grid a platform with standard 
 protocols, to provide seamless and secure discovery and access to infrastructure and interactions among
  the resources and services.
  
  With the advent of parallel programming and distributed systems it became 
- obvious that tightly coupled computers can be used for computing purpose and this 
+ obvious that loosely coupled computers can be used for computing purposes and this 
  network of workstations  gave rise to the notion of distributed computing. 
  The Globus project began in 1996 and Argonne National Laboratory was responsible for a process 
  and middleware communication system called Nexus which provides remote service 
@@ -259,8 +253,8 @@ protocols, to provide seamless and secure discovery and access to infrastructure
  global Nexus that would provide support for resource discovery, data access, 
  authentication and authorization.
 
-At this point Grid replaced the use of metacomputer and \emph{ researchers from 
-coolaboration of universities termed Grid as integrated resources 
+At this point ``Grid" replaced the use of ``meta-computer" and \emph{ researchers from 
+a collaboration of universities termed Grid as integrated resources 
 with integration of many computational visualization and information resources 
 into a coherent infrastructure.}
 
@@ -278,7 +272,7 @@ The following are goals and visions of Grid Computing:
     The key factors to enable such aggregation includes protocols and mechanisms 
     to secure discovery, access to and aggregation of resources for the 
     realization of virtual organization and applications that can exploit such 
-    environment.
+    an environment.
 
   \item[Ubiquitous Service-Oriented Architecture] This is the ability of the grid 
   environment to do secure and scalable resource and data discovery along with scheduling and 
@@ -293,12 +287,14 @@ The following are goals and visions of Grid Computing:
   
 \end{description}
 
-At the heart of the grid computing tools provided by the open science grid lies globus toolkit, that provides
+A key computational grid in the USA is the Open Science Grid, described further 
+in section 2.5.
+At the heart of the grid computing tools provided by the open science grid lies the globus toolkit, that provides
 features and interfaces that enable grid computing. 
 \section{Globus}
-The Globus project is intended to accelerate the then meta-computing that build on 
+The Globus project was intended to accelerate the then meta-computing that was built on 
 distributed and parallel software technologies. The term meta-computing was used 
-before the term grid was actually coined, refers to 
+before the term grid was actually coined which refers to 
 a networked virtual supercomputer, constructed dynamically from geographically 
 distributed resources linked by high speed networks \cite{globus}. Scheduling 
 and managing a large group of heterogeneous resources is a challenging and 
@@ -306,8 +302,7 @@ daunting task on the grid. The Globus toolkit provides a framework for managing
 and scheduling of grid resources across heterogeneous environments.
 
 The Globus toolkit consists of a set of modules,  each module provides an 
-interface for the provision of implementation of low level functionalities of 
-the mechanisms of the toolkit:
+interface for the provision of an implementation of low level functionalities of the toolkit:
 
 \begin{itemize}
   \item{Resource location and allocation} 
@@ -320,24 +315,23 @@ the mechanisms of the toolkit:
 
 There are multiple Virtual Organizations across Open Science Grid. One such VO 
 is Nebraska's HCC VO at Holland Computing Center. A VO provides researchers with 
-computing resources and enables sharing of resources across other VO's and 
-additionally it signs the user's certificate so that a user is identified with a given VO.
+computing resources and enables sharing of resources across other VO's. It additionally it signs the user's certificate so that a user is identified with a given VO.
 
 We delegate our identification on the grid. \emph{voms-proxy-init}
-is used to generate voms proxy at the submit host, we can specify voms as our 
-virtual organization, hcc:/hcc in this case and hours as the number of hours the proxy would be 
-active/valid, it must be ensured that the proxy period is approximately greater than the 
+is used to generate a voms proxy at the submit host, we can specify voms as our 
+virtual organization, hcc:/hcc in this case, and hours as the number of hours the proxy would be 
+active/valid. It must be ensured that the proxy period is approximately greater than the 
 length of period of runtime of jobs for successful running of all the jobs. A 
 proxy provides a secure way to access grid resources, by creating a proxy and 
-delegating our identity to it for a short period of time enables us to sandbox 
+delegating our identity to it for a short period of time it enables us to sandbox 
 the theft of the proxy credentials and limit the damage to the short lived proxy 
-and keep our original set of credentials safe on the grid.
+and keep our original set of credentials safe.
 
-HTCondor-G extends condor to the grid environment, jobs are sent across grid universe using 
-Globus software, Globus toolkit provides support for building grid systems but 
-Submitting, managing and executing jobs have the same capabilities in both HTCondor 
-and HTCondor-G world. Globus provides fault tolerant features to HTCondor-G 
-jobs. GRAM is the Grid Resource Allocation and Management protocol, supports remote 
+HTCondor-G extends condor to the grid environment. Jobs are sent across the grid universe using 
+Globus software. The Globus toolkit provides support for building grid systems but 
+submitting, managing and executing jobs have the same capabilities in both the HTCondor 
+and the HTCondor-G world. Globus provides fault tolerant features to HTCondor-G 
+jobs. GRAM is the Grid Resource Allocation and Management protocol, which supports remote 
 submission of computational request.
 
 gt2 is an initial GRAM protocol which is used in Globus Toolkit version 1 and 
@@ -356,10 +350,10 @@ national cyber-infrastructures to meet the needs of research and academic commun
 OSG provides resources and directions to Virtual Organizations(VO's) for the purposes of LHC experiments
 and HTC in general. \\
 
-Building an OSG site requires listing background and careful planning. The major 
-components of an OSG site includes a Storage Element and Compute Element. \\
+Building an OSG site requires analysis of the requirements and careful planning. The major 
+components of an OSG site include a Storage Element and a Compute Element. \\
 Storage elements (SE) manage physical systems, disk caches and hierarchical mass storage 
-systems. A SE is an interface for grid jobs to underlying storage Storage Resource Management protocol (SRM) and Globus 
+systems. A SE is an interface for grid jobs to the Storage Resource Management protocol (SRM) and the Globus 
 GridFTP protocol and others. A storage element requires an underlying storage system like hadoop, xrootd
 and a GridFTP server and an SRM interface.\\
 A Compute Element(CE) allows grid users to run jobs on your site. It provides a 
@@ -393,14 +387,14 @@ the jobs are running locally.
 Although Condor flocking has workflow balancing features across multiple condor 
 pools, it isn't aware of the slower and faster sites/pools. The adaptive Co-Scheduler 
 keeps tabs on turnaround time and is aware of which site is faster or slower. If we 
-look at the idea that scavenging idle resources increases throughput, it does. However If we look at the case where jobs are greater than the available slots 
+look at the idea that scavenging idle resources increases throughput, it does. However, if we look at the case where jobs are greater than the available slots 
 across all the pools, condor flocking stops working here as deeper understanding of sites
 would be required here to push more jobs at faster sites and importantly push less jobs
-at slower sites, flocking's role is to scavenge idle computing slots across multiple pools. 
+at slower sites. Flocking's role is to scavenge idle computing slots across multiple pools. 
 
 Another aspect where condor flocking isn't designed to perform well is when jobs are 
 contending for the same resource (CPU, RAM, Disk I/O \& Network I/O). Even though we'll be 
-having idle slot exist s on remote pools, condor flocking might not be able to use those 
+having idle slots on remote pools, condor flocking might not be able to use those 
 slots as they'd be degraded because of the contention. In this case again 
 Co-Scheduler comes in handy. Based on the turnaround time, Co-Scheduler waits for a random 
 amount of time for degradation to clear and doesn't put excessive job load on the 
@@ -409,7 +403,7 @@ throughput.
 
 To conclude, we can say that condor flocking provides features of balancing 
 large workflows and doesn't include features that would detect degradation in 
-the cluster and also doesn't keep track of information of site performance, which might be exploited to increase the overall throughput of the system. 
+the cluster. It also doesn't keep track of information of site performance, which might be exploited to increase the overall throughput of the system. 
 
 \subsection{Condor Job Router}
 
@@ -444,7 +438,7 @@ ClassAd and modifying some attributes of the job. This copy is called the routed
 copy and this routed copy shows up in the job queue with a new job id\cite{manual56}.
 
 Condor job router utilizes a routing table which contains the listing of sites 
-the job must be submitted to and the name of the potential grid resources, Routing is processed via a  condor config file which is defined by the new ClassAds.
+the job must be submitted to and the name of the potential grid resources. Routing is processed via a  condor config file which is defined by the new ClassAds.
 
 \begin{figure}
 \begin{lstlisting}
@@ -464,20 +458,19 @@ JOB_ROUTER_ENTRIES = \
 \caption{Configuration to implement Job Routing}
 \end{figure}
 
-Condor Job Router appears to be a step up from the Condor Flocking in terms of 
+Condor Job Router appears to be a step up from Condor Flocking in terms of 
 scavenging resources and sending the extra jobs to another condor pool. Condor 
 Job Router also maintains the submission rate of the jobs on submit hosts equal to that of remote clusters. But the job 
 router does not keep track of how fast each condor cluster is. Thus 
 condor job router does not optimize the displacement of jobs from a slower 
 cluster. Since it maintains the rate of submission of jobs, we can be sure that if a job is completed 
-at a faster site, it's immediately replaced by the next one. The same is true for a job at slower site 
-too.
+at a faster site, it's immediately replaced by the next one. The same is true for a job at a slower site.
 This might result in increasing the degradation if there exists some. For example, if the job router kept track of slower sites, it
 can send less jobs to slower sites and thereby increase the overall throughput of the given workflow.
 
 A preliminary examination shows that condor job router does seem to have degradation detection features, 
-it does not submit to a pool that already has idle jobs however close examination reveals that even though it
-submits to a pool with non-idle jobs it isn't aware of the fact that the jobs in the queue would have 
+since it does not submit to a pool that already has idle jobs. However, close examination reveals that even though it
+submits to a pool with non-idle jobs, it isn't aware of the fact that these jobs in the queue would have 
 undergone degradation due to contention on same resource and thus isn't a viable mechanism for degradation detection.
 
 \subsection{OSG Match Maker}
@@ -485,10 +478,11 @@ undergone degradation due to contention on same resource and thus isn't a viable
 OSG Match maker is a tool that was created to be distributed among small to 
 medium sized VOs to be used as a powerful submit interface to OSG. It is 
 designed to retrieve VO specific site information and also to verify and 
-maintain the sites by regularly submitting verification jobs to make sure site 
+maintain the sites by regularly submitting verification jobs to make sure a site 
 can continue receiving jobs.
 OSG Match maker is another tool that provides information about the grid sites to the 
-Condor scheduler. Condor scheduler does all the matchmaking with the classads attributes. 
+Condor scheduler. Condor scheduler does all the matchmaking with the ClassAds attributes. 
+OSG Match Maker is no longer supported on OSG.
   
 
 \chapter{Adaptive Co-Scheduler For Highly Dynamic Resources}
@@ -657,7 +651,7 @@ optimal capacity:
 
 Algorithm \ref{alg:Degradation Detection} sets up the stage for degradation 
 detection, it submits more jobs if the T2 is within permissible limits else the 
-algorithm calls the optimal capacity algorithm that detects optimal capactiy.
+algorithm calls the optimal capacity algorithm that detects optimal capacity.
 
 Algorithm \ref{alg:optimalCapacity(high,low)} is passed two parameters high and 
 low. These represent the upper bound where degradation has taken place and lower bound 
@@ -899,7 +893,7 @@ degradation has many jobs that have higher turnaround times compared to a non
 degraded graph. A histogram that doesn't project degradation will have most of 
 its jobs with the permissible limits of turnaround time and wouldn't have large 
 variance in terms of the turnaround time. We also make use of goodput graphs 
-that plot an area graph w.r.t the turnaround time. It provides a good way to 
+that plot an area graph w.r.t the sorted list of turnaround time. It provides a good way to 
 visualize the turnaround time. Ideally the area under the curve must be minimum 
 in case of a non degraded graph but in a graph that projects degradation the 
 area under the curve is larger than its non-degraded counterpart.
@@ -910,7 +904,7 @@ turnaround time by having a larger turnaround time than that present in figure
 \ref{fig:coscheduler_histogram}. The former was the result of bulk submission 
 whereas the later is the result of co-scheduler run. The associated goodput 
 graphs in figure \ref{fig:tusker_jobgoodput} and figure \ref{fig:coscheduler_jobgoodput} 
-show thir respective areas with degraded run taking up larger area. When we look 
+show their respective areas with degraded run taking up larger area. When we look 
 at the turnaround time distribution on independent NFS servers we can inter many 
 things, that the degradation is lot significant in the figure \ref{fig:nfs_tusker_histogram} and the co-scheduler 
 resolves degradation to a larger extent as noted in figure 
