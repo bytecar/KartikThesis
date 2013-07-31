@@ -101,7 +101,15 @@ schedulers do not take into account resources like RAM, Disk I/O or Network I/O.
  situations arising from new and/or complex use cases either by writing a plugin for existing schedulers or by Co­Scheduling. 
  A key issue is when resources like RAM, Disk I/O or Network I/O are used in an unchecked manner and 
  performance degrades as a result of it. Further scheduling jobs that claim the degraded resources could 
- overwhelm the resource to an extent that the resource will finally stop responding or the system will crash. With an increase in the number of entities concurrently using the resource, there is a need to monitor and schedule concurrent and unmanaged access to any given resource to prevent  degradation. These issues that we encounter in real life at the Holland Computing Center 
+ overwhelm the resource to an extent that the resource will finally stop responding or theWe solve system will crash. 
+ 
+ We schedule based on minimum turnaround time of the sites which will help increase 
+the throughput of the overall workload for the Co-Scheduler, which also is a good load-balancer in itself. 
+The Co-Scheduler is driven by the fact that turnaround time increases when 
+concurrent jobs accessing these resources reach a threshold value which in-turn causes 
+degradation and this is the basis for this work.
+
+With an increase in the number of entities concurrently using the resource, there is a need to monitor and schedule concurrent and unmanaged access to any given resource to prevent  degradation. These issues that we encounter in real life at the Holland Computing Center 
 are the basis and motivation for tackling this problem and for developing an adaptive approach for scheduling. 
 This co-scheduler must be aware of multi­-resource degradation, balance load across multiple sites and 
 run clusters at high efficiency and share resources fluidly. An initial implementation tested at HCC will 
@@ -142,8 +150,8 @@ performance degradation that occurs when one of the resources is overwhelmed is 
 addressed. This problem occurs when many jobs are scheduled on a single system. Some of 
 the schedulers like maui \cite{pbstorque} are sophisticated enough to take into account contention of other 
 resources like RAM but ultimately convert the 2D vector values of CPU and RAM 
-into a single scalar value. In-practice this hard-codes the value or presents these resources
-in a fixed ratio which makes us question effectiveness of such scheduling mechanisms. 
+into a single scalar value. In practice, this hard-codes the value or presents these resources
+in a fixed ratio which makes us question the effectiveness of such scheduling mechanisms. 
 
 At Holland Computing Center of the University of Nebraska-Lincoln, we're 
 tackling this issue of cluster degradation caused by 
@@ -156,16 +164,16 @@ the throughput of the overall workload for the Co-Scheduler, which also is a goo
 Existing schedulers depend on the availability of resources and frequent polling 
 of it via resource manager to determine the slots for scheduling. It should be noted that state of the art 
 schedulers like maui/torque, slurm, HTCondor take into account only CPU as a 
-resource and the resources like RAM, Disk I/O or Network I/O are either ignored or 
+resource and resources like RAM, Disk I/O or Network I/O are either ignored or 
 their resource equivalent is converted into a scalar value which isn't an effective way of tackling the 
 multiple resource scheduling problem. This might result in scheduling excessive jobs 
-on a single machine. In some schedulers, for example it'll be pre-assigned on every node that 1 CPU-CORE will have 2 GB of
-memory. This kind of pre-assignment seems like it's addressing the resource degradation of RAM in addition to CPU but suffers 
+on a single machine. In some schedulers, for example, it will be pre-assigned on every node that 1 CPU-CORE will have 2 GB of
+memory. This kind of pre-assignment seems like it is addressing the resource degradation of RAM in addition to CPU but suffers 
 from the above mentioned problems. We take a turnaround time approach to measure degradation. We define a resource 
-to be degraded if and when we submit jobs that results in increasing the 
+to be degraded if and when we submit jobs that result in increasing the 
 turnaround time by 25\% . It must be 
 noted that there isn't explicit measurement of status of individual resources like RAM, Disk I/O, 
-Network I/O, since there are no resource managers keeping track of these resource allocations. 
+Network I/O, since there are no guarantees the resource managers keep track of these resource allocations. 
 The Co-Scheduler is driven by the fact that turnaround time increases when 
 concurrent jobs accessing these resources reach a threshold value which in-turn causes 
 degradation and this is the basis for this work.
@@ -174,18 +182,18 @@ One aspect to Co-Scheduler is degradation detection and management by adapting
 to the throttling of a resource. Another aspect is to efficiently distribute jobs 
 across multiple sites which increases the throughput of the workload. The Co-Scheduler adapts to degradation by backing off submission rates and waiting for a 
 period of time (till the detection of a target capacity) for the next incremental submission. It efficiently 
-distributes the jobs and load-balances across multiple sites, thus submitting more 
-jobs to a site with lesser turnaround time and also ensuring to submit lesser 
-jobs to the sites with larger turnaround time. This efficiently load-balances 
+distributes the jobs and balances load across multiple sites, thus submitting more 
+jobs to a site with less turnaround time and also ensuring to submit lesser 
+jobs to the sites with larger turnaround time. This efficiently balances load 
 across multiple sites on a grid and improves throughput because the loads may vary dynamically. 
 The capacity of jobs the cluster can efficiently run without degradation needs to be detected and updated again and 
 again after a given period of time.
 
-Finally, since the grid environment is a heterogeneous environment, it's absolutely necessary
-to use APIs that are available on all the systems across the grid. To implement such a Co-Scheduler
- we limit ourselves to HTCondor based clusters and utilize libcondorapi. The result is a threaded Co-Scheduler 
-that submits to multiple sites concurrently and is aware of multiple-resource degradation and
-load-balances efficiently across multiple sites of the grid. 
+Finally, since the grid environment is a heterogeneous environment, the scheduler implementation must use APIs that are available on all the systems across the grid. To implement such a Co-Scheduler
+ we limit ourselves to HTCondor based clusters and utilize libcondorapi that needs to be present on the submission site and we can still submit jobs to sites without HTCondor scheduler via Condor_G interface. 
+ The result is a threaded Co-Scheduler 
+that submits to multiple sites concurrently, is aware of multiple-resource degradation, and
+balances load efficiently across multiple sites of the grid. 
 
 Please note that all the references to the Co-Scheduler in this thesis refers to the adaptive Co-Scheduler designed 
 by us.  
@@ -200,7 +208,7 @@ but how many times can the job be run in the next few months. In another definit
 Infrastructure defines HTC as a computing paradigm that focuses on the efficient 
 execution of a large number of loosely coupled tasks \cite{manual56}. One such 
 distributed computing software providing High-Throughput Computing services is 
-HTCondor developed by the team at University of Wisconsin-Madison.
+HTCondor developed by the team at University of Wisconsin-Madison\cite{manual56}.
 
 
 \section{HTCondor} HTCondor is a distributed system developed by HTCondor team at the 
@@ -219,14 +227,16 @@ represented by the sum total of all the
  and migration, remote system calls and ClassAds. HTCondor also includes a 
  powerful resource manager with an efficient match-making mechanism that is 
  implemented via ClassAds, which makes HTCondor understandable when compared with other 
- compute schedulers\cite{manual56}. With numerous features of HTCondor, it is 
- used for grid computing on the scale of large number of massive computers 
+ compute schedulers\cite{manual56}. With the numerous features of HTCondor, it is 
+ used for grid computing on the scale of a large number of massive computers 
  that are loosely coupled on the open science grid. We architected a 
- bioinformatics program iSG, indel sequence generator which simulates the evolutionary events of highly diverged DNA and protein 
- sequences. iSG is a high memory footprint program, we architected it so as to 
+ bioinformatics program iSG, indel sequence generator, which simulates the evolutionary events of highly diverged DNA and protein 
+ sequences. iSG is a high memory footprint program. We architected it so as to 
  make it run on the grid and use less amount of peak memory \cite{condorisg_paper}. 
  We retained the order of execution of individual jobs 
- by making extensive use of HTCondor's DAGMAN.
+ by making extensive use of HTCondor's DAGMAN. DAGMAN allows one to manage a 
+ progressing of ordered execution of jobs, the jobs are in the form of a 
+ directed acyclic graph.
  
  \section{Grid Computing}
 
@@ -234,7 +244,7 @@ As the cost of computers and the network connecting them is decreasing, there is
 paradigm shift in computing with the clustering of geographically distributed 
 resources. The goal of this is to provide a 
 service oriented infrastructure. Organizations like the Grid community and Global Grid Forum are constantly investing effort in making Grid a platform with standard 
-protocols, to provide seamless and secure discovery and access to infrastructure and interactions among
+protocols \cite{Foster:2001:AGE:1080644.1080667}, to provide seamless and secure discovery and access to infrastructure and interactions among
  the resources and services.
  
  With the advent of parallel programming and distributed systems it became 
@@ -308,7 +318,7 @@ interface for the provision of an implementation of low level functionalities of
 
 There are multiple Virtual Organizations across Open Science Grid. One such VO 
 is Nebraska's HCC VO at Holland Computing Center. A VO provides researchers with 
-computing resources and enables sharing of resources across other VO's. It additionally it signs the user's certificate so that a user is identified with a given VO.
+computing resources and enables sharing of resources across other VO's. It additionally signs the user's certificate so that a user is identified with a given VO.
 
 We delegate our identification on the grid. \emph{voms-proxy-init}
 is used to generate a voms proxy at the submit host, we can specify voms as our 
@@ -316,7 +326,7 @@ virtual organization, hcc:/hcc in this case, and hours as the number of hours th
 active/valid. It must be ensured that the proxy period is approximately greater than the 
 length of period of runtime of jobs for successful running of all the jobs. A 
 proxy provides a secure way to access grid resources, by creating a proxy and 
-delegating our identity to it for a short period of time it enables us to sandbox 
+delegating our identity to it for a short period of time. It enables us to sandbox 
 the theft of the proxy credentials and limit the damage to the short lived proxy 
 and keep our original set of credentials safe.
 
@@ -334,14 +344,13 @@ to be more scalable and robust, referred to as GRAM5.
 \section{Open Science Grid} The Open Science Grid(OSG) \cite{osg}, provides service and support 
 for resource providers and scientific institutions using a distributed fabric of 
 high throughout computational services. OSG was created to facilitate data analysis from the 
-Large Hadron Collider\cite{osg}. OSG doesn't own resources but provides software and services to 
+Large Hadron Collider\cite{osg}. 
+OSG provides resources and directions to Virtual Organizations(VO's) for the purposes of LHC experiments
+and HTC in general.OSG doesn't own resources but provides software and services to 
 users and enables opportunistic usage and sharing of resources among resource providers.
 The main goal of OSG is to advance science through open distributed computing. 
 The OSG provides a multi-disciplinary partnership to federate local, regional, community and 
 national cyber-infrastructures to meet the needs of research and academic communities at all scales.
-
-OSG provides resources and directions to Virtual Organizations(VO's) for the purposes of LHC experiments
-and HTC in general. \\
 
 Building an OSG site requires analysis of the requirements and careful planning. The major 
 components of an OSG site include a Storage Element and a Compute Element. \\
@@ -362,7 +371,7 @@ There are situations where we can have multiple HTCondor pools exist and some of
 the pools have many idle slots that are available for utilization. To efficiently utilize the resources across pools condor provides 
 mechanisms like HTCondor flocking and HTCondor job router. These mechanisms 
 provide similar functionality to the Co-Scheduler designed here. In the following sections, we compare 
-and evaluate these mechanisms with the design and functionality of Co-Scheduler in grid environments.
+and contrast these mechanisms with the design and functionality of Co-Scheduler in grid environments.
 
 \subsection{HTCondor Flocking}
 Flocking refers to a mechanism where a job that cannot run on its own HTCondor pool 
@@ -386,11 +395,11 @@ would be required here to push more jobs at faster sites and importantly push le
 at slower sites. Flocking's role is to scavenge idle computing slots across multiple pools. 
 
 Another aspect where HTCondor flocking isn't designed to perform well is when jobs are 
-contending for the same resource (CPU, RAM, Disk I/O \& Network I/O). Even though we'll be 
-having idle slots on remote pools, HTCondor flocking might not be able to use those 
+contending for the same resource (CPU, RAM, Disk I/O \& Network I/O). Even though there will be 
+idle slots on remote pools, HTCondor flocking might not be able to use those 
 slots as they'd be degraded because of the contention. In this case again 
-Co-Scheduler comes in handy. Based on the turnaround time, Co-Scheduler waits for a random 
-amount of time for degradation to clear and doesn't put excessive job load on the 
+Co-Scheduler comes in handy. Based on the turnaround time, Co-Scheduler relaxes the load on the resource by submitting fewer  jobs 
+this helps reduce degradation and doesn't put excessive job load on the 
 degraded resource. It diverts the jobs elsewhere to perhaps another site, which in-turn increases the 
 throughput.
 
@@ -459,12 +468,12 @@ HTCondor job router does not optimize the displacement of jobs from a slower
 cluster. Since it maintains the rate of submission of jobs, we can be sure that if a job is completed 
 at a faster site, it's immediately replaced by the next one. The same is true for a job at a slower site.
 This might result in increasing the degradation if there exists some. For example, if the job router kept track of slower sites, it
-can send less jobs to slower sites and thereby increase the overall throughput of the given workflow.
+could send less jobs to slower sites and thereby increase the overall throughput of the given workflow.
 
 A preliminary examination shows that HTCondor job router does seem to have degradation detection features, 
 since it does not submit to a pool that already has idle jobs. However, close examination reveals that even though it
 submits to a pool with non-idle jobs, it isn't aware of the fact that these jobs in the queue would have 
-undergone degradation due to contention on same resource and thus isn't a viable mechanism for degradation detection.
+undergone degradation due to contention on some resource and thus isn't a viable mechanism for degradation detection.
 
 \subsection{OSG Match Maker}
 
@@ -484,9 +493,9 @@ OSG Match Maker is no longer supported on OSG.
 Due to the heterogeneous nature of the grid it is challenging to schedule the dynamic resources on the grid. 
 We propose a solution that primarily solves the problem of degradation due to contention among 
 jobs for any given resource like RAM, I/O and the network. The contention among jobs for the same given
-resource gives rise to degradation. Further contention on large scale job submissions can even crash the I/O resource.
+resource gives rise to degradation. For example, contention on large scale job submissions can crash the I/O resource.
  Efficient and high throughput
-distribution of jobs across multiple cluster is another challenging problem that we have addressed in 
+distribution of jobs across multiple clusters is another challenging problem that we have addressed in 
 this particular Co-Scheduler Solution. 
 
 \begin{figure}[htbp!]
@@ -499,24 +508,23 @@ this particular Co-Scheduler Solution.
 \FloatBarrier
 
 In figure \ref{fig:degradationdetect-intro}, with C1 called job propagation factor and k the initial number of 
-jobs submitted we can see that on each iteration we're adding $k = C1 * k$ jobs, and on the
-next iteration, if we have a degraded system, then we submit $k=k/C1$ amount of 
+jobs submitted, we can see that on each iteration $k = C1 * k$ number of jobs are added. However, if we have a degraded system, we submit $k=k/C1$ number of 
 jobs by backing off on the amount of jobs submitted.
 
 \section{Degradation detection and Capacity based scheduling}
 In the first part of the solution we target the basic problem of degradation. To give an example, suppose
 we have a file server that can serve 100 MBps of data which is available for concurrent access and a user has submitted 200 jobs
 each consuming 10 MBps of data I/O. If 200 CPU slots are available, a typical state of the art Scheduler
-schedules these 200 jobs without actually looking at the I/O load. This results in a degraded system, 
+schedules these 200 jobs without actually looking at the I/O load. This results in a degraded system 
 over time if more jobs are Scheduled to utilize this file server. This file server might even crash. We would need a 
 degradation handling mechanism that would adaptively scale with the load and  exponentially 
 back off during a high contention period. Thus we need an intervention in the form
-of a Co-Scheduler that intelligently handles degradation. 
-We start the capacity algorithm by submitting jobs to the cluster and measure 
+of a Co-Scheduler that intelligently handles degradation.
+We start the capacity algorithm by submitting jobs to the cluster and by measuring 
 the turnaround time of each iteration. If we find that the current turnaround 
 time of an iteration is 25\% greater than the previous iteration we term it as a 
 degradation. We now try to find the best capacity of jobs between the current 
-and the previous iteration by exponentially backing off between these two iteration. We keep finding the 
+and the previous iteration by exponentially backing off between these two iterations. We keep finding the 
 target capacity dynamically for each iteration as the contention may change and target capacity keeps 
  varying. Once the target capacity is found then it is retained for job submissions for a given amount of time
  limited to a maximum of ten iterations of jobs, thus solving the problem of performance degradation. 
@@ -547,44 +555,33 @@ $$
 
 \end{figure}
 Since we're already tracking site performance, the other problem that we tackled was that of efficient distribution of work load to multiple sites of the 
-grid, referred in \ref{fig:multiSite2}.
+grid, referred in section \ref{fig:multiSite2}.
 Some of these sites could be error prone, some of them could be faster and some can be slower. We need to
-take an approach that improves the overall throughput of the workload, thus we keep track of average turnaround
- time for each batch of jobs submitted to the cluster. We take the average turnaround time of the batch of jobs that is submitted 
- across multiple clusters. We group turnaround times of these batches of jobs based on the value of the 
- turnaround time to be greater than, less than, or equal to the average turnaround time of all batch of jobs.
- This gives us a classification of sites that run faster. We exploit this information in our scheduler. 
- To implement multi-site job submission and load balancing we start submitting one job to each cluster 
- and measure the turnaround time once the job returns. Now we have the information of turnaround time 
- of a particular resource of all the clusters. Continuing to submit jobs concurrently in a similar manner
+take an approach that improves the overall throughput of the workload, thus we keep track of average AgTime which equals (Queue wait time + Run-time) for each batch of jobs submitted to the cluster. 
+We take the average AgTime of the batch of jobs that is submitted 
+ across multiple clusters. We group AgTimes of these batches of jobs based on the value of the 
+ AgTime to be greater than, less than, or equal to the average AgTime of all batches of jobs.
+ This gives us a classification of sites that run faster and also that are more available. We exploit this information in our scheduler. 
+ To implement multi-site job submission and load balancing, we start submitting one job to each cluster 
+ and measure the AgTime once the job returns. Now we have the information of AgTime of all the clusters. Continuing to submit jobs concurrently in a similar manner
   would result in the completion of
- the workload in a non-efficient way. Out of the list of all the turnaround times of different sites we take the 
+ the workload in a non-efficient way. Out of the list of all the AgTimes of different sites we take the 
  sites
- that have lower than average turnaround time of all batches of jobs and increase the job propagation 
+ that have lower than average AgTime of all batches of jobs and increase the job propagation 
  factor for these jobs. This in-turn increases the number of jobs submitted to that site and helps us efficiently distribute 
  the workload to faster clusters. Submitting to a faster site would enable us to submit 
- more jobs to the particular site. As the turnaround time is lower we would finish jobs quickly and make room for more
- jobs if we submit less to slower sites. These sites can still help us improve the throughput to a greater extent by enabling us to 
- prevent further degradation at those sites.
- 
- The error handling mechanism is gracefully handled by 
- HTCondor and by this approach we have an efficient system with increased throughput and with proper distribution
-  of load across multiple clusters.  
-        
- 
- 
+ more jobs to the particular site. As the AgTime is lower we would finish jobs quickly and make room for more
+ jobs if we submit less to slower sites. Slower sites can still help us improve the throughput to a greater extent as long as we submit less jobs to them and prevent performance degradation at those sites. The error handling mechanism is gracefully handled by 
+ HTCondor and by this approach we have an efficient system with increased throughput and with proper distribution of load across multiple clusters.
  
 %%A table of comparison among all three kinds of mechanisms
-
-
 %\chapter{Design and Implementation of Co-Scheduler}
 %(an image to showcase layer of position of co-scheduler)
 The co-scheduler requires the presence of a HTCondor installation and libcondorapi.
 It is written in the C++ language and has extensively made use of pthreads for 
-synchronization and multithreading. The co-scheduler has two components to it, the first one is a capacity detection
-algorithm which is found by measuring degradation and the other aspect to it is 
-multi-site workload distribution algorithm. The following paragraphs detail the 
-engineering aspects of the design. Program begins by taking the number of jobs, site's information and submit script 
+synchronization and multithreading. The co-scheduler has two components to it: the first one is a capacity detection
+algorithm which is found by measuring degradation and the other is a multi-site workload distribution algorithm. The following paragraphs detail the 
+engineering aspects of the design. The program begins by taking the number of jobs, the site's information and submit script 
 information as its input. The number of jobs are the ones submitted across 
 multiple sites. The next input file contains information on the list of sites that can be used 
 for load balancing in the GridResource format of the HTCondor ClassAds API, e.g. \emph{tusker-gw1.unl.edu/jobmanager-pbs}.
@@ -592,19 +589,17 @@ It is assumed that all the sites listed in the sites input file are working and
 do not have any misconfiguration issues. The third and the final option to the 
 scheduler is the submit description file. All the job ClassAd information and 
 requirements can be written in this section and all of these will be applicable on the grid when a particular job is 
-scheduled. There are different universe in HTCondor, we select the universe where we want to submit 
-jobs. There are many different kinds of universe in condor including vanilla, java, grid. vanilla enables job submissions to the local
+scheduled. There are many different kinds of universe in condor including Vanilla, java, grid. vanilla enables job submissions to the local
 condor pool, java enables submissions of java programs and grid enables direct submission to the grid. 
 The two main important attributes required in the submit description 
-file are 1. \emph{universe} which needs to be ``grid" all the time as we are submitting 
-to grid sites via HTCondor-G, and the other most important thing is the 
-2. \emph{grid-proxy}. 
+file are \emph{universe} which needs to be ``grid" all the time as we are submitting 
+to grid sites via HTCondor-G, and the other most important thing is the \emph{grid-proxy} which is elaborated in section 2.4. 
 \texttt{condor\_wait} \cite{manual56} can be used to wait for a certain job or 
-number of jobs to complete, it watches the log file and sees if the completion 
+number of jobs to complete, which watches the log file and sees if the completion 
 entry of the job is made in the log file that is generated by the \emph{log} 
 command in the HTCondor submit description file. There are two options we can 
 specify to \texttt{condor\_wait}. One is \texttt{-num}, \texttt{number-of-jobs} that waits
-till the \texttt{number-of-jobs} are completed and the other option is to specify \texttt{wait}, seconds that 
+till the \texttt{number-of-jobs} are completed and the other option is to specify \texttt{wait}, \texttt{seconds} that 
 waits for specified amount of time. If nothing is specified \texttt{condor\_wait} waits indefinitely till
 the job(s) are complete.
 
@@ -664,20 +659,20 @@ detection. T1 is the turnaround time for previous iteration of job submission
 and T2 is the turnaround time for current iteration of job submission. C1 is the 
 job propagation factor that is used to vary the amount of jobs submitted and C2 
 is the degradation factor that is arbitrarily set to 25\%.
-Co-Scheduler submits more jobs if the T2 is doesn't exceed the value C2 * T1, that is if the turnaround time
+Co-Scheduler submits more jobs if T2 doesn't exceed T1 by the value of C2 * T1. That is, if the turnaround time
 hasn't increased by 25\% or else the 
 algorithm calls the target capacity algorithm that detects the target capacity.
 
 Algorithm \ref{alg:optimalCapacity(high,low)} is passed two parameters high and 
 low. ``high" represents the upper bound where degradation has taken place and ``low" the lower bound 
 where degradation hasn't taken place. We have another variable ``mid" which is the average of high and low.
-The algorithm submits to ``mid" amount of jobs and if the degradation is detected we find capacity in
+The algorithm submits ``mid" amount of jobs to a site and if the degradation is detected we find capacity in
 the lower range of values from low to mid. If the degradation is not detected we find the capacity in 
-the upper range of mid to high.The algorithm works like a modified binary 
-search and takes O(log n) iterations to find the target set of jobs.
+the upper range of mid to high. The algorithm works like a modified binary 
+search and takes O(log n) iterations to find the target set of jobs that a site can handle.
 
 \section{Implementation of Multi-site load distribution based scheduling}
-In figure \ref{fig:multiSite1}. Multi-site load distribution based scheduling uses the agtime (queue wait time + run-time) at each 
+In figure \ref{fig:multiSite1}, multi-site load distribution based scheduling uses the agtime (queue wait time + run-time) at each 
 site for sending future jobs. Its a threaded algorithm. The following is the extracted function of per thread execution:
 
 \begin{algorithm}
@@ -685,20 +680,20 @@ site for sending future jobs. Its a threaded algorithm. The following is the ext
 
 \STATE $c1 \gets 2$ 
 \COMMENT {c1: Job propagation factor}
-\COMMENT {multiSite is a list storing turnaround times of multiple sites.}
+\COMMENT {multiSite is a list storing AgTimes of multiple sites.}
 \STATE $low = min(multiSite)$
 \STATE $high = max(multiSite)$
 \STATE average = $\sum_i multiSite_i$ / Sizeof($multiSite_i$)
 
-\IF{turnaroundTime\_Thread $==$ low}
+\IF{AgTime\_Thread $==$ low}
 \STATE $c1 \gets c1 * 4$
 \ENDIF
 
-\IF{turnaroundTime\_Thread $==$ high}
+\IF{AgTime\_Thread $==$ high}
 \STATE $c1 \gets c1/2>1 ? (c1/2:1)$
 \ENDIF
 
-\IF{turnaroundTime\_Thread $<$ average}
+\IF{AgTime\_Thread $<$ average}
 \STATE $c1 \gets c1 * 2$
 \ENDIF
 
@@ -708,12 +703,11 @@ site for sending future jobs. Its a threaded algorithm. The following is the ext
 \end{algorithm}
 
 In Algorithm \ref{alg:updateJobPropagationConstant()}, each thread is responsible for submitting jobs 
-to each site. Each thread stores the information of average agTime of the batch of jobs submitted to the given site.
- Each thread finds the average agTime from other sites and averages this 
- information to find the average distribution of agTime across the sites. Once 
- we find this average we compare it with the site of the thread to classify different sites 
-into faster and slower sites based on the performance of the sites bound by the 
-agTime for the purpose of multi-site load distribution algorithm.
+to each site. Each thread stores the information of average AgTime of the batch of jobs submitted to the given site.
+ Each thread finds the average AgTime from other sites and averages this 
+ information to find the average distribution of AgTime across the sites. Once 
+ we find this average we compare it with the site average to classify different sites 
+into faster and slower sites based on the performance of the sites.
 
 \begin{figure}[htbp!]
 \begin{center}
@@ -792,18 +786,18 @@ void logReader(string hostFile, args *data, int nSites)	{
 }
 
 \end{lstlisting}
-\subsection{Synchronization Co-Scheduler Code}
+\subsection{Synchronization of  Co-Scheduler Code}
 
 There are critical sections in the code where synchronization becomes absolutely 
-necessary. One such variable is number-of-jobs. The number of jobs executed across 
+necessary. One shared variable is number-of-jobs. The number of jobs executed across 
 the sites should remain fixed and the value must match the value that has been 
 given as input. In a threaded system where each thread is executing jobs on a 
 different cluster it becomes necessary to define \texttt{N}, the number of jobs executed or executing as a 
-critical section. Here we define a pthread mutex and lock it for all write accesses to the \texttt{N}
-, we serialize the access to \texttt{N} and make conditional checks during job submission, so as not to allow
+critical section. Here we define a pthread mutex and lock it for all write accesses to 
+\texttt{N}. We serialize the access to \texttt{N} and make conditional checks during job submission, so as not to allow
 job submissions when \texttt{N} is greater than the input value. By 
 serializing the access across multiple threads the total jobs executed remains 
-equal to the input number of jobs. The following chunk of code block 
+equal to the input number of jobs. The following code block 
 demonstrates the use of mutexes for serialization of  \texttt{N} among the threads.
 
 \begin{figure}[htbp!]
@@ -868,11 +862,11 @@ the size of the list is less than the number of sites. The last thread comes in
 and the same condition is voided and executes a conditional broadcast to unblock 
 all the waiting threads and the scheduling proceeds further to asynchronously schedule further 
 jobs.
-In this example of synchronization code there is a possibility that some of the 
+In this example of synchronization code there is a possibility that all of the 
 threads wait continuously if the availability of the sites is very low. The 
 above code needs availability on clusters for quicker execution. The 
 Co-Scheduler will wait till the timeout period and if the jobs do not execute we 
-remove the jobs on that site and proceed further with Co-Scheduling.
+remove the jobs on that site and proceed further with Co-Scheduling thereby preventing a deadlock.
 \chapter{Evaluation}
 
 \section{Introduction}
@@ -890,28 +884,27 @@ scenario that occurs at Holland Computing Center when large amount of I/O bound
 jobs are submitted to the cluster and there is no check on the usage and the 
 capacity of the I/O resource.
 
-In this evaluation, we've submitted 375 jobs to a cluster tusker using bulk 
+In this evaluation, we've submitted 375 jobs to the cluster ``Tusker" using bulk 
 HTCondor-G submission and then submitting it through the co-scheduler so that we 
 can keep track of degradation, detect it and prevent it. The submit scripts for 
 the co-scheduler are generated dynamically and the grid universes are populated 
-from the input sites file. The machine that is used for jobs submission is a 
-HTCondor developmental virtual machine, that had to be configures for the grid 
+from the input sites file. The machine used for jobs submission was a 
+HTCondor developmental virtual machine, that had to be configured for the grid 
 submissions before its use for the experiment. 375 Jobs were run on the lustre 
-filesystem and the results for this run in figure \ref{fig:tusker_histogram} is 
-of the production level tusker. We were able to see degradation when we 
-submitted jobs in bulk using HTCondor-G interface but we couldn't be sure if the 
+filesystem and the results for this run are in figure \ref{fig:tusker_histogram} is 
+of ``Tusker". We were able to see degradation when we 
+submitted jobs in bulk using the HTCondor-G interface but we couldn't be sure if the 
 degradation was the result of just our I/O based test job. Thus, separate 
 individual NFS servers were setup on both the clusters sandhills and tusker and 
 tests were run again. The results of the tests are presented in figure \ref{fig:nfs_tusker_histogram} 
 and figure \ref{fig:nfs_coscheduler_tusker_histogram}.
 
-As stated above we're making use of histograms of binned turnaround time and good 
+We're making use of histograms of binned turnaround time and good 
 put graphs to study the effect of degradation. A histogram that projects 
-degradation has many jobs that have higher turnaround times compared to a non 
-degraded graph. A histogram that doesn't reflect degradation will have most of 
-its jobs with the permissible limits of turnaround time and wouldn't have large 
+degradation has many jobs that have higher turnaround times compared to a non-degraded graph. A histogram that doesn't reflect degradation will have most of 
+its jobs within the permissible limits of turnaround time and won't have large 
 variance in terms of the turnaround time. We also make use of goodput graphs 
-that plot an area graph w.r.t the sorted list of turnaround time. It provides a good way to 
+that plot an area graph w.r.t the sorted list of turnaround time. This provides a good way to 
 visualize the turnaround time. Ideally, the area under the curve must be minimum 
 in case of a non degraded graph but in a graph that projects degradation the 
 area under the curve is larger than its non-degraded counterpart.
@@ -959,13 +952,13 @@ ofile.close();
 \begin{figure}[h!]
 \begin{center}
 \includegraphics{images/tusker_histogram}
-\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Tusker cluster}
+\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Tusker cluster via bulk Condor_G submission}
 \label{fig:tusker_histogram}
 \end{center}
 
 \begin{center}
 \includegraphics{images/coscheduler_histogram}
-\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Co-Scheduler}
+\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Tusker  via Co-Scheduler}
 \label{fig:coscheduler_histogram}
 \end{center}
 
@@ -975,39 +968,39 @@ ofile.close();
 
 \section{Evaluation of Co-Scheduler on independent NFS server}
 
-The test I/O job used in this experiment continuously does disk write operations for a given period of time, the average
-time taken by the program being 300-500 seconds when run on different resources and generated approximately 3 GB of data file
-in that period. It was necessary to design our own test I/O program because of the need to change the path
-to the NFS servers where we'd be doing our benchmark to test the servers. The test I/O job takes two parameters
+The test I/O job used in this experiment continuously does disk write operations for a given period of time, the 
+usual time taken by the program being 300-500 seconds when run on different resources. It generated approximately 3 GB of data file
+in that period. Designing our own test I/O program,  facilitated the change of the path
+to the NFS servers where we'd be doing our benchmark to test the servers. The test I/O job takes two 
+parameters, 
 one is the size N and the other is the path where the I/O must take place. There are two 
-clusters under consideration, Sandhills and tusker. 375 jobs are run on each of 
+clusters under consideration, Sandhills and Tusker. 375 jobs are run on each of 
 the clusters and then a separate set of 375 jobs are scheduled using 
 Co-Scheduler. We measure the extent of degradation on each cluster and quantitatively 
 determine how degradation is handled by the Co-Scheduler.
 
 In figure \ref{fig:tusker_histogram}  considerable jobs take more than 2500 seconds to complete. 
-When the resource is not degraded the test Job takes approximately 300-500 seconds of time.Tusker is 
+When the resource is not degraded the test job takes approximately 300-500 seconds of time. Tusker is 
 currently running Lustre filesystem. If the capacity of the filesystem permitted 
-to serve 375 jobs(or the number of jobs running concurrently) then most jobs 
-would be completed within 500 seconds of time but that isn't the case with the 
-tusker and hence we can conclude the resultant graph is the cause of degradation 
-of disk I/O resource but there needs to be clarification about the source of the degradation. 
+to serve 375 jobs (or the number of jobs running concurrently) then most jobs 
+would be completed within 500 seconds of time but that isn't the case with Tusker. We can conclude the resultant graph is the cause of degradation 
+of the disk I/O resource, but there needs to be clarification about the source of the degradation. 
 It could either be caused by the test I/O jobs that were submitted or can be caused 
 by a set of jobs that are already running on the cluster. To clarify this issue 
-and get a clear picture on whats causing the degradation the result from the 
+and get a clear picture of what caused the degradation the result from the 
 figure \ref{fig:nfs_tusker_histogram} sheds more information.
 
 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics{images/tusker_jobgoodput}
-\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted}
+\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted on Tusker via Condor_G bulk submission}
 \label{fig:tusker_jobgoodput}
 \end{center}
 
 \begin{center}
 \includegraphics{images/coscheduler_jobgoodput}
-\caption{Goodput graph showing the turnaround time distribution of 375 jobs submitted on Co-Scheduler}
+\caption{Goodput graph showing the turnaround time distribution of 375 jobs submitted on Tusker with the Co-Scheduler}
 \label{fig:coscheduler_jobgoodput}
 \end{center}
 
@@ -1017,13 +1010,13 @@ figure \ref{fig:nfs_tusker_histogram} sheds more information.
 \begin{figure}[htbp!]
 \begin{center}
 \includegraphics{images/nfs_tusker_histogram}
-\caption{Histogram showing turnaround time distribution of 300 Jobs, when run using a Co-Scheduler on a custom small scale independent NFS server}
+\caption{Histogram showing turnaround time distribution of 300 Jobs, when run via Condor_G bulk submission on a custom small scale independent NFS server on Tusker}
 \label{fig:nfs_tusker_histogram}
 \end{center}
 
 \begin{center}
 \includegraphics{images/nfs_coscheduler_tusker_histogram}
-\caption{Histogram showing turnaround time distribution of 375 Jobs, when run using a Co-Scheduler on a custom small scale independent NFS server}
+\caption{Histogram showing turnaround time distribution of 300 Jobs, when run using a Co-Scheduler on a custom small scale independent NFS server on Tusker}
 \label{fig:nfs_coscheduler_tusker_histogram}
 \end{center}
 
@@ -1042,7 +1035,7 @@ figure \ref{fig:nfs_tusker_histogram} sheds more information.
 
 \begin{center}
 \includegraphics{images/nfs_coscheduler_tusker_goodput}
-\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted}
+\caption{Goodput graph showing the turnaround time distribution of 300 jobs submitted}
 \label{fig:nfs_coscheduler_tusker_goodput}
 \end{center}
 
@@ -1058,9 +1051,11 @@ the I/O resources serve the concurrent jobs without a degraded turnaround time.
 This reduces the total time taken for the execution of this batch of jobs 
 making way for the use of cluster for other jobs that might need computing.
 
-Multi-Site load distribution algorithm distributes the job based on agtime (queue wait time + run-time) and load on the cluster, the following was the distribution of jobs when run 
-on Co-Scheduler with 750 Jobs. The cluster with lower agtime will get more amount of jobs to run. 
-For tusker the throughput was 47.2 CPU time hours/elapsed time hours and for sandhills it was 3.12 CPU time hours/elapsed time hours.
+A Multi-Site load distribution algorithm distributes the job based on agtime (queue wait time + run-time) and load on the cluster. The following was the distribution of jobs when run 
+on Co-Scheduler with 750 Jobs. The cluster with lower AgTime will get more amount of jobs to run. 
+For Tusker the throughput was 47.2 CPU time hours/elapsed time hours and for Sandhills it was 3.12 CPU time hours/elapsed time hours. 
+Which means there was greater availability on Tusker and more jobs were 
+submitted to tusker than Sandhills.
 
 \section{Scalability Analysis of the Co-Scheduler}
 
@@ -1069,13 +1064,13 @@ dispatching jobs on a given site. The Co-Scheduler can potentially spawn thousan
 of threads and serve them efficiently but there are only hundreds of OSG sites 
 to run on. It can certainly scale to all the sites of the OSG. 
 
-Co-Scheduler can take large number of jobs as input, of the order of hundreds 
+Co-Scheduler can take a large number of jobs as input, of the order of hundreds 
 of thousands of jobs and dispatch the jobs efficiently with the load-balancing 
-algorithm and ensures to run these jobs without incurring degradation.
+algorithm and ensure these jobs run without incurring degradation.
 
 Co-Scheduler is a robust program written in C++ that schedules based on 
 turnaround time to detect degradation and schedules based on  (queue wait time + 
-run-time) for the sake of load balancing purpose.
+run-time) for the sake of load balancing.
 
 \chapter{Conclusion}
 
@@ -1086,7 +1081,7 @@ detects degradation and taxes degraded resources less in terms of scheduling
 jobs to the degraded resources. The capacity of the cluster is a varying 
 quantity that determines the amount of concurrent jobs that may run without 
 degradation. Co-Scheduler successfully finds the capacity of the cluster and 
-maintains the capacity up-to 10 successive iterations of the scheduler before 
+maintains the capacity upto 10 successive iterations of the scheduler before 
 recalculating the capacity.
 
 Scheduling based on agtime enables us to submit more jobs to the clusters having greater availability. Co-Scheduler improves throughput of the job set which handles the 
@@ -1097,25 +1092,35 @@ Resource management is completely abstracted. We do not need to consider the
 allocation and management of disk I/O or RAM or Network I/O. The Co-Scheduler is 
 driven by the fact that whenever a resource is overloaded it results in 
 degradation and subsequently does not respond optimally or crashes. A simple and 
-efficient way of tracking degradation is implemented and further monitoring the load of 
+efficient way of tracking degradation is implemented which monitors the load of 
 resources on the cluster. As much as this is a positive aspect of the 
 Co-Scheduler, the downside is that there isn't a way to tell which of the resource is 
-the cause of the degradation. Because the Co-Scheduler is used with large workloads its usually known based on 
+the cause of the degradation. Because the Co-Scheduler is used with large workloads is usually known based on 
 the workload the resource that is under stress.
 
-While Co-Scheduling offers multiple enhancements for the users of large workload 
-there are some of the downsides of it. Co-Scheduler submits the jobs stepwise, in 
+While Co-Scheduling offers multiple enhancements for the users of large workloads 
+there are some downsides of it. Co-Scheduler submits the jobs stepwise, in 
 the sense that it submits a smaller set of jobs and waits for its outcome to decide upon the quantity 
 of jobs on the next iteration. This 
-nature of the Co-Scheduler can accumulate lot of queue wait time if the availability 
+nature of the Co-Scheduler can accumulate a lot of queue wait time if the availability 
 of the compute resources are lower. In the multi-site load distribution 
-algorithm if one of the sites has very low availability the Co-Scheduler would 
+algorithm, if one of the sites has very low availability the Co-Scheduler would 
 accumulate the queue wait time of that particular site before it can complete 
-its execution. To solve this issue we schedule based on agtime (queue wait time + run-time) so that clusters with availability 
-get more number of jobs that the ones with lower availability. When a batch of 
+its execution. To solve this issue we schedule based on AgTime (queue wait time + run-time) so that clusters with availability 
+get more number of jobs than the ones with lower availability. When a batch of 
 jobs is submitted to multiple grid sites, the sites not responding timeout after 
 a defined period of time and clean up the jobs that were submitted so that the Co-Scheduler may further 
 schedule these jobs on faster and more available clusters. 
+
+\section{Future work}
+
+\begin{enumerate}
+  \item{C2, degradation factor plays an important role in the detection of degradation and in determining the capacity of the cluster. An important future
+  work is to derive C2 specifically for a given resource.}
+  \item{Ability to classify the nature of degradation either by taking input from the user or detect dynamically from a degraded resource at run-time.}
+  \item{To enforce Co-Scheduling on protected resources, further work needs to be done to integrate Co-Scheduler code  in the local resource manager}
+  \item{Further study of Co-Scheduler's effect on throughput.}
+\end{enumerate}
 %% backmatter is needed at the end of the main body of your thesis to%% set up page numbering correctly for the remainder of the thesis\backmatter%% Start the correct formatting for the appendices\appendix
 %% Appendices go here (if you have them)
 %% Bibliography goes here (You better have one)%% BibTeX is your friend%% Index go here (if you have one)
