@@ -190,7 +190,7 @@ The capacity of jobs the cluster can efficiently run without degradation needs t
 again after a given period of time.
 
 Finally, since the grid environment is a heterogeneous environment, the scheduler implementation must use APIs that are available on all the systems across the grid. To implement such a Co-Scheduler
- we limit ourselves to HTCondor based clusters and utilize libcondorapi that needs to be present on the submission site and we can still submit jobs to sites without HTCondor scheduler via $Condor_G$ interface. 
+ we limit ourselves to HTCondor based clusters and utilize libcondorapi that needs to be present on the submission site and we can still submit jobs to sites without HTCondor scheduler via $Condor\_G$ interface. 
  The result is a threaded Co-Scheduler 
 that submits to multiple sites concurrently, is aware of multiple-resource degradation, and
 balances load efficiently across multiple sites of the grid. 
@@ -952,7 +952,7 @@ ofile.close();
 \begin{figure}[h!]
 \begin{center}
 \includegraphics{images/tusker_histogram}
-\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Tusker cluster via bulk $Condor_G$ submission}
+\caption{Histogram showing turnaround time distribution of 375 Jobs, when run on Tusker cluster via bulk $Condor\_G$ submission}
 \label{fig:tusker_histogram}
 \end{center}
 
@@ -994,7 +994,7 @@ figure \ref{fig:nfs_tusker_histogram} sheds more information.
 \begin{figure}[h!]
 \begin{center}
 \includegraphics{images/tusker_jobgoodput}
-\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted on Tusker via $Condor_G$ bulk submission}
+\caption{Goodput graph showing the turnaround time distribution of all the jobs submitted on Tusker via $Condor\_G$ bulk submission}
 \label{fig:tusker_jobgoodput}
 \end{center}
 
@@ -1010,7 +1010,7 @@ figure \ref{fig:nfs_tusker_histogram} sheds more information.
 \begin{figure}[htbp!]
 \begin{center}
 \includegraphics{images/nfs_tusker_histogram}
-\caption{Histogram showing turnaround time distribution of 300 Jobs, when run via $Condor_G$ bulk submission on a custom small scale independent NFS server on Tusker}
+\caption{Histogram showing turnaround time distribution of 300 Jobs, when run via $Condor\_G$ bulk submission on a custom small scale independent NFS server on Tusker}
 \label{fig:nfs_tusker_histogram}
 \end{center}
 
