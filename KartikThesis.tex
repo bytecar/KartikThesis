@@ -864,7 +864,7 @@ all the waiting threads and the scheduling proceeds further to asynchronously sc
 jobs.
 In this example of synchronization code there is a possibility that all of the 
 threads wait continuously if the availability of the sites is very low. The 
-above code needs availability on clusters for quicker execution. The 
+above code needs availability on clusters to prevent threads waiting for long time. The 
 Co-Scheduler will wait till the timeout period and if the jobs do not execute we 
 remove the jobs on that site and proceed further with Co-Scheduling thereby preventing a deadlock.
 \chapter{Evaluation}
@@ -1028,14 +1028,14 @@ figure \ref{fig:nfs_tusker_histogram} sheds more information.
 
 \begin{center}
 \includegraphics{images/nfs_tusker_goodput}
-\caption{Goodput graph showing the turnaround time distribution of 300 Jobs on an independent NFS Server}
+\caption{Goodput graph showing the turnaround time distribution of 300 Jobs, when run via $Condor\_G$ bulk submission on a custom small scale independent NFS server on Tusker}
 \label{fig:nfs_tusker_goodput}
 \end{center}
 
 
 \begin{center}
 \includegraphics{images/nfs_coscheduler_tusker_goodput}
-\caption{Goodput graph showing the turnaround time distribution of 300 jobs submitted}
+\caption{Goodput graph showing the turnaround time distribution of 300 jobs submitted, when run using a Co-Scheduler on a custom small scale independent NFS server on Tusker}
 \label{fig:nfs_coscheduler_tusker_goodput}
 \end{center}
 
@@ -1114,14 +1114,11 @@ schedule these jobs on faster and more available clusters.
 
 \section{Future work}
 
-\begin{enumerate}
-  \item{C2, degradation factor plays an important role in the detection of degradation and in determining the capacity of the cluster. An important future
-  work is to derive C2 specifically for a given resource.}
-  \item{Ability to classify the nature of degradation either by taking input from the user or detect dynamically from a degraded resource at run-time.}
-  \item{To enforce Co-Scheduling on protected resources, further work needs to be done to integrate Co-Scheduler code  in the local resource manager.}
-  \item{Include the features of Co-Scheduler in Job Router.}
-  \item{Further study of Co-Scheduler's effect on throughput.}
-\end{enumerate}
+Degradation factor, C2 plays an important role in the detection of degradation and in determining the capacity of the cluster. An important future
+work is to derive C2 specifically for a given resource. It would be of importance for scheduling if we had the ability to classify the nature of degradation either by taking input from the user or detect dynamically from a degraded resource at run-time.
+
+To protect the resources at HCC its necessary to enforce Co-Scheduler like scheduling mechanism. To enforce Co-Scheduler like scheduling on protected resources, further work needs to be done to integrate Co-Scheduler code in the local resource manager. Another important aspect would be to include the features of Co-Scheduler in Job Router. 
+Further study of Co-Scheduler's effect on throughput would provide us directions to tweak multi-site load balancing algorithm.
 %% backmatter is needed at the end of the main body of your thesis to%% set up page numbering correctly for the remainder of the thesis\backmatter%% Start the correct formatting for the appendices\appendix
 %% Appendices go here (if you have them)
 %% Bibliography goes here (You better have one)%% BibTeX is your friend%% Index go here (if you have one)
